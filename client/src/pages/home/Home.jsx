@@ -7,7 +7,7 @@ const Home = () => {
       <img src="/orbital.png" alt="orbital" className="orbital" />
       {/* Left */}
       <div className="left">
-        <h1>AI&nbsp;CHATBOT</h1>
+        <h1>JESS&nbsp;AI</h1>
         <h2>Supercharge your creativity and productivity</h2>
         <h3>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium
