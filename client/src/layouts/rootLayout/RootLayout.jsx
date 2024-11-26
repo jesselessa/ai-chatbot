@@ -14,7 +14,7 @@ const RootLayout = () => {
           {/* Logo */}
           <Link to="/" className="logo">
             <img src="/logo.png" alt="logo" />
-            <span>AI Chat Bot</span>
+            <span>AI CHAT BOT</span>
           </Link>
 
           {/* User info */}

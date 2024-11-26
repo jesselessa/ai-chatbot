@@ -2,18 +2,20 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 16px 64px;
+  padding: 2rem 5rem;
 
   header {
+    height: 50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    z-index: 10; /* Header over bg image */
 
     .logo {
       display: flex;
       align-items: center;
       font-weight: bold;
-      gap: 8px;
+      gap: 0.8rem;
 
       img {
         width: 32px;
