@@ -4,17 +4,20 @@
   flex-direction: column;
   padding: 2rem 5rem;
 
+  @media screen and (max-width: 1024px) {
+    padding: 2rem;
+  }
+
   header {
     height: 50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 10; /* Header over bg image */
 
     .logo {
       display: flex;
       align-items: center;
-      gap: 0.8rem;
+      gap: 1rem;
 
       img {
         width: 32px;
