@@ -13,6 +13,7 @@ dist-ssr
 *.local
 
 # Clerk key (handle authentication)
+.env
 .env.local
 
 # Editor directories and files
