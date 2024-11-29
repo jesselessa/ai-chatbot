@@ -1,0 +1,10 @@
+.loader {
+  border-radius: 50%;
+  animation: 1s linear infinite spin;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
