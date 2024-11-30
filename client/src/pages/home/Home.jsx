@@ -45,7 +45,13 @@ const Home = () => {
                   ? "/jane.jpeg"
                   : "bot.png"
               }
-              alt=""
+              alt={
+                typingStatus === "john"
+                  ? "user"
+                  : typingStatus === "jane"
+                  ? "user"
+                  : "bot"
+              }
             />
 
             {/* Animated text */}

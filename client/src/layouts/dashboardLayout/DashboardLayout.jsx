@@ -5,6 +5,7 @@ import { useAuth } from "@clerk/clerk-react";
 
 // Component
 import Loader from "../../components/loader/Loader.jsx";
+import Menu from "../../components/menu/Menu.jsx";
 
 const DashboardLayout = () => {
   const { isLoaded, userId } = useAuth();
@@ -30,9 +31,11 @@ const DashboardLayout = () => {
         </div>
       ) : (
         <div className="dashboardLayout">
-          <div className="menu">MENU</div>
-
+          <div className="menu">
+            <Menu />
+          </div>
           <div className="content">
+            {/* <Outlet /> acts as a placeholder where the child routes defined in the React Router configuration will be rendered */}
             <Outlet />
           </div>
         </div>

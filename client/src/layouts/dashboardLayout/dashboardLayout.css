@@ -4,3 +4,18 @@
   justify-content: center;
   align-items: center;
 }
+
+.dashboardLayout {
+  height: 100%;
+  display: flex;
+  gap: 50px;
+  padding-top: 20px;
+}
+.menu {
+  flex: 1;
+}
+
+.content {
+  flex: 4;
+  background-color: #2c2937;
+}
