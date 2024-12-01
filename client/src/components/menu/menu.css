@@ -76,6 +76,15 @@ hr {
 }
 
 .upgrade .texts span:last-child {
-  font-size: 13px;
   color: #888;
+}
+
+.upgrade a {
+  font-size: 13px;
+  border-radius: 0;
+  padding: 0;
+}
+
+.upgrade a:hover {
+  background-color: transparent;
 }
