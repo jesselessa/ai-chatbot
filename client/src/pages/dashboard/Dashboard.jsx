@@ -1,6 +1,9 @@
 import "./dashboard.css";
 import { useUser } from "@clerk/clerk-react";
 
+// Component
+import PromptForm from "../../components/promptForm/PromptForm.jsx";
+
 const Dashboard = () => {
   const { user } = useUser();
 
@@ -33,24 +36,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="form-container">
-        <form name="request-form">
-          <img
-            src="/attachment.png"
-            className="attachment-btn"
-            alt="attachment"
-          />
-          <textarea
-            id="text"
-            name="text"
-            rows="3"
-            placeholder="Ask me anything..."
-          />
-          <div className="button send-btn">
-            <img src="/arrow.png" alt="arrow" />
-          </div>
-        </form>
-      </div>
+      <PromptForm />
     </div>
   );
 };
