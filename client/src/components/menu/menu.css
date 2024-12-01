@@ -14,7 +14,7 @@ hr {
 }
 
 .title {
-  font-weight: bold;
+  font-weight: 600;
   font-size: 13px;
   margin-bottom: 10px;
 }
@@ -65,17 +65,17 @@ hr {
   height: 16px;
 }
 
-.texts {
+.upgrade .texts {
   display: flex;
   flex-direction: column;
 }
 
-.texts span:first-child {
+.upgrade .texts span:first-child {
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 600;
 }
 
-.texts span:last-child {
+.upgrade .texts span:last-child {
   font-size: 13px;
   color: #888;
 }

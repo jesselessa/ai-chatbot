@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import { useAuth } from "@clerk/clerk-react";
 
-// Component
+// Components
 import Loader from "../../components/loader/Loader.jsx";
 import Menu from "../../components/menu/Menu.jsx";
 
