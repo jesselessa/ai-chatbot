@@ -1,6 +1,11 @@
 import "./loader.css";
 
-const Loader = ({ width, height, border, borderLeftColor }) => {
+const Loader = ({
+  width = "50px",
+  height = "50px",
+  border = "5px solid transparent",
+  borderLeftColor = "white",
+}) => {
   return (
     <div
       className="loader"

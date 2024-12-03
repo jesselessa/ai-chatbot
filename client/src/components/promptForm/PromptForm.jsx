@@ -1,21 +1,18 @@
 import "./promptForm.css";
 
-const PromptForm = () => {
+// Component
+import Upload from "../upload/Upload.jsx";
+
+const PromptForm = ({ setImg, includeFileInput = true }) => {
+  // Handle form
   const handleSubmit = async (e) => {
     e.preventDefault();
   };
 
   return (
-    <div className="form-container">
-      <form name="prompt-form" onSubmit={handleSubmit}>
-        <input type="file" name="file" id="file" multiple={false} hidden />
-        <label htmlFor="file">
-          <img
-            className="attachment-btn"
-            src="/attachment.png"
-            alt="attachment"
-          />
-        </label>
+    <div className="prompt-form-container">
+      <form className="prompt-form" name="prompt-form" onSubmit={handleSubmit}>
+        {includeFileInput && <Upload setImg={setImg} />}
 
         <textarea
           id="text"

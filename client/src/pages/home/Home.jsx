@@ -11,12 +11,13 @@ const Home = () => {
       <img src="/orbital.png" alt="orbital" className="orbital" />
       {/* Left */}
       <div className="left">
-        <h1>JESS&nbsp;AI</h1>
+        <h1>ASK&nbsp;JESSBOT</h1>
         <h2>
           Your friendly mini assistant for big ideas and quick&nbsp;answers
         </h2>
         <h3>
-          Jess AI is a compact and intuitive chatbot, using Google Gemini AI.
+          Ask Jessbot is a compact and intuitive chatbot, using Google Gemini
+          AI.
           <br />
           Smart, fast, and always ready, it makes your life simpler, one chat at
           a time&nbsp;!

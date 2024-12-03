@@ -22,12 +22,7 @@ const DashboardLayout = () => {
     <>
       {!isLoaded ? (
         <div className="loadingPage">
-          <Loader
-            width="50px"
-            height="50px"
-            border="5px solid transparent"
-            borderLeftColor="white"
-          />
+          <Loader />
         </div>
       ) : (
         <div className="dashboardLayout">

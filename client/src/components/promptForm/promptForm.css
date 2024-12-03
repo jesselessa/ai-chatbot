@@ -1,10 +1,10 @@
-.form-container {
+.prompt-form-container {
   width: 80%;
   display: flex;
   border-radius: 20px;
 }
 
-form {
+.prompt-form {
   position: relative;
   width: 100%;
   height: 100%;
@@ -66,7 +66,8 @@ textarea::placeholder {
   margin: 0 20px 0 10px;
 }
 
-.send-btn:active, .attachment-btn:active{
+.send-btn:active,
+.attachment-btn:active {
   transform: translateY(1.5px);
 }
 

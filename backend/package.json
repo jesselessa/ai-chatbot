@@ -5,14 +5,14 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "clear && nodemon server.js"
+    "start": "clear && nodemon --env-file .env server.js"
   },
   "keywords": [],
   "author": "Jessica Elessa",
   "license": "ISC",
   "description": "Backend for AI chatbot application",
   "dependencies": {
-    "dotenv": "^16.4.5",
+    "cors": "^2.8.5",
     "express": "^4.21.1",
     "imagekit": "^5.2.0"
   },

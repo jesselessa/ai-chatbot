@@ -11,8 +11,8 @@ const Dashboard = () => {
     <div className="dashboard">
       <div className="texts">
         <h1>
-          {user.firstName
-            ? `Hello ${user.firstName}\u00A0!`
+          {user?.firstName
+            ? `Hello ${user?.firstName}\u00A0!`
             : "Hello, I'm Jess AI\u00A0!"}
           <br />
           <span className="subtitle">How can I help you&nbsp;?</span>
@@ -36,7 +36,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <PromptForm />
+      <PromptForm includeFileInput={false} />
     </div>
   );
 };
