@@ -5,29 +5,12 @@ import model from "../../lib/gemini.js";
 import Upload from "../upload/Upload.jsx";
 
 const PromptForm = ({
-  setQuestion,
-  setAnswer,
-  setImg,
   includeFileInput = true,
+  setQuestion,
+  img,
+  setImg,
+  onSubmit, // Function from ChatPage
 }) => {
-  // Create a new prompt
-  const createPrompt = async (prompt) => {
-    setAnswer({ isLoading: true, content: "" });
-
-    try {
-      const result = await model.generateContent(prompt); // Call AI model
-      const content = await result.response.text();
-      // Update answer with result
-      setAnswer({ isLoading: false, content });
-    } catch (error) {
-      console.error("Error generating content:", error);
-      setAnswer({
-        isLoading: false,
-        content: "An error occurred. Please try again.",
-      });
-    }
-  };
-
   // Handle form
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,15 +18,12 @@ const PromptForm = ({
     // Handle text field
     const text = e.target.text.value.trim();
     if (!text) {
-      setAnswer({
-        isLoading: false,
-        content: "Fill up the text field.",
-      });
+      setQuestion("Ask your question.");
       return;
     }
 
     setQuestion(text); // Update question in ChatPage
-    createPrompt(text); // Generate a response
+    await onSubmit(text); // Call createPrompt from ChatPage
     e.target.reset(); // Reset form after submission
   };
 

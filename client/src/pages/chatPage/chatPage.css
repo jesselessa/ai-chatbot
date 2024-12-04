@@ -34,11 +34,11 @@
 }
 
 .message {
-  min-width: 50%;
-  max-width: 80%;
+  max-width: 85%;
   align-self: flex-start; /* AI message */
   background-color: #0e0c16;
   border-radius: 20px;
+  word-wrap: break-word; /* Prevents text from overflowing div*/
   padding: 20px;
 }
 
@@ -58,5 +58,3 @@
 .message li {
   margin: 10px 0;
 }
-
-

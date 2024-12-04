@@ -41,8 +41,24 @@ const Upload = ({ setImg }) => {
   };
 
   const onUploadStart = (evt) => {
-    console.log("Start", evt);
-    setImg((prev) => ({ ...prev, isLoading: true }));
+    const file = evt.target.files[0]; // Upload only 1 file
+    console.log("File:", file);
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImg((prev) => ({
+        ...prev,
+        isLoading: true,
+        aiData: {
+          inlineData: {
+            // inlineData = GoogleGenerativeAI.Part object
+            data: reader.result.split(",")[1], // Image code version
+            mimeType: file.type,
+          },
+        },
+      }));
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
