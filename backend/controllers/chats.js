@@ -1,35 +1,16 @@
 import Chat from "../models/chat.js";
 import UserChats from "../models/userChats.js";
 
-// Get all user chats
-export const getUserChats = async (req, res) => {
-  const { userId } = req.params;
-
-  try {
-    const userChats = await UserChats.findOne({ userId });
-
-    if (!userChats) {
-      return res.status(404).json({ message: "No chats found for this user" });
-    }
-
-    res.status(200).json(userChats.chats);
-  } catch (err) {
-    console.error("Error fetching chats:", err);
-    res.status(500).json({ error: "Error fetching chats" });
-  }
-};
-
-// Get a single chat
+// Get a specific chat
 export const getChat = async (req, res) => {
-  const { chatId } = req.params;
+  const { userId } = req.auth; // Safely retrieve userId from req.auth
+  const { id: chatId } = req.params;
 
   try {
-    const chat = await Chat.findById(chatId);
-
+    const chat = await Chat.findOne({ _id: chatId, userId });
     if (!chat) {
       return res.status(404).json({ message: "Chat not found" });
     }
-
     res.status(200).json(chat);
   } catch (err) {
     console.error("Error fetching chat:", err);
@@ -39,48 +20,79 @@ export const getChat = async (req, res) => {
 
 // Add a new chat
 export const addNewChat = async (req, res) => {
-  const { userId, history, title } = req.body;
+  const { userId } = req.auth;
+  const { text } = req.body;
 
   try {
-    // Create a Chat
-    const chat = new Chat({ userId, history });
-    await chat.save();
+    const newChat = new Chat({
+      userId,
+      history: [{ role: "user", parts: [{ text }] }],
+    });
 
-    // Add chat to userChats model
+    const savedChat = await newChat.save();
+
     const userChats = await UserChats.findOne({ userId });
 
     if (!userChats) {
-      // If user doesn't already have chats, create new one
       await new UserChats({
         userId,
-        chats: [{ _id: chat._id, title, createdAt: chat.createdAt }],
+        chats: [{ _id: savedChat._id, title: text.substring(0, 40) }],
       }).save();
     } else {
-      // Add chat to existing list
-      userChats.chats.push({ _id: chat._id, title, createdAt: chat.createdAt });
+      userChats.chats.push({
+        _id: savedChat._id,
+        title: text.substring(0, 40),
+      });
       await userChats.save();
     }
 
-    res.status(201).json({ message: "Chat saved successfully", chat });
+    res
+      .status(201)
+      .json({ message: "Chat saved successfully", chatId: savedChat._id });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "Error saving chat" });
+    console.error("Error creating chat:", err);
+    res.status(500).json({ error: "Error creating chat" });
   }
 };
 
-export const deleteChat = async (req, res) => {
-  const { chatId } = req.params;
+// Update a chat
+export const updateChat = async (req, res) => {
+  const { userId } = req.auth;
+  const { id: chatId } = req.params;
+  const { question, answer, img } = req.body;
+
+  const newItems = [
+    ...(question
+      ? [{ role: "user", parts: [{ text: question }], ...(img && { img }) }]
+      : []),
+    { role: "model", parts: [{ text: answer }] },
+  ];
 
   try {
-    const chat = await Chat.findByIdAndDelete(chatId);
+    const updatedChat = await Chat.updateOne(
+      { _id: chatId, userId },
+      { $push: { history: { $each: newItems } } }
+    );
+    res.status(200).json(updatedChat);
+  } catch (err) {
+    console.error("Error updating chat:", err);
+    res.status(500).json({ error: "Error updating chat" });
+  }
+};
 
+// Delete a chat
+export const deleteChat = async (req, res) => {
+  const { userId } = req.auth;
+  const { id: chatId } = req.params;
+
+  try {
+    const chat = await Chat.findOneAndDelete({ _id: chatId, userId });
     if (!chat) {
       return res.status(404).json({ message: "Chat not found" });
     }
 
-    // Remove chat from userChats model
     await UserChats.updateOne(
-      { userId: chat.userId },
+      { userId },
       { $pull: { chats: { _id: chatId } } }
     );
 

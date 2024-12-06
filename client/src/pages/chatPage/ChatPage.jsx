@@ -122,7 +122,7 @@ const ChatPage = () => {
         setQuestion={setQuestion}
         img={img}
         setImg={setImg}
-        onSubmit={generateResponse}
+        generateResponse={generateResponse}
         ref={formRef}
       />
     </div>

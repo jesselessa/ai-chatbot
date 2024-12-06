@@ -9,7 +9,7 @@ const PromptForm = ({
   setQuestion,
   img,
   setImg,
-  onSubmit, // Function from ChatPage
+  generateResponse,
 }) => {
   // Handle form
   const handleSubmit = async (e) => {
@@ -17,13 +17,14 @@ const PromptForm = ({
 
     // Handle text field
     const text = e.target.text.value.trim();
+
     if (!text) {
       setQuestion("Ask your question.");
       return;
     }
 
     setQuestion(text); // Update question in ChatPage
-    await onSubmit(text); // Call createPrompt from ChatPage
+    await generateResponse(text); // Call generateResponse from ChatPage
     e.target.reset(); // Reset form after submission
   };
 
@@ -36,7 +37,7 @@ const PromptForm = ({
         name="text"
         rows={3}
         placeholder="Ask me anything..."
-      />
+      ></textarea>
 
       <button className="send-btn">
         <img src="/arrow.png" alt="arrow" />

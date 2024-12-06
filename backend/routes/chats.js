@@ -1,16 +1,16 @@
 import express from "express";
 import {
-  getUserChats,
   getChat,
   addNewChat,
+  updateChat,
   deleteChat,
 } from "../controllers/chats.js";
 
 const router = express.Router();
 
-router.get("/user/:userId", getUserChats);
-router.get("/chat/:chatId", getChat);
+router.get("/:id", getChat);
 router.post("/", addNewChat);
-router.delete("/:chatId", deleteChat);
+router.put("/:id", updateChat);
+router.delete("/:id", deleteChat);
 
 export default router;

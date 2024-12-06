@@ -1,23 +1,32 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import path, { dirname } from "path";
+import url, { fileURLToPath } from "url";
 import mongoose from "mongoose";
 import ImageKit from "imagekit";
-import chatsRoute from "./routes/chats.js"; // Chats routes
+import { clerkMiddleware } from "@clerk/express";
+import chatsRoute from "./routes/chats.js";
+import userChatsRoute from "./routes/userChats.js";
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 const app = express();
 
-// Allow cross-origin requests
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+//* Allow cross-origin requests
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
+    credentials: true,
   })
 );
 
-// Parse incoming requests in JSON
+//* Parse incoming requests with JSON payload
 app.use(express.json());
 
-// Configure Mongoose
+//* Configure MongoDB
 const connect = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
@@ -27,29 +36,47 @@ const connect = async () => {
   }
 };
 
-// Configure ImageKit
+//* Configure ImageKit
 const imagekit = new ImageKit({
   urlEndpoint: process.env.IMAGE_KIT_ENDPOINT,
   publicKey: process.env.IMAGE_KIT_PUBLIC_KEY,
   privateKey: process.env.IMAGE_KIT_PRIVATE_KEY,
 });
 
-// ImageKit authentication info
-app.get("/api/upload", (_req, res) => {
+// Get IK authentication info
+app.get("/api/upload", (req, res) => {
   const result = imagekit.getAuthenticationParameters();
   res.send(result);
 });
 
-// API routes
-app.use("/api/chats", chatsRoute);
+//* Configure Clerk
+//! clerkMiddleware() checks the request's cookies and headers for a session JWT and, if found, attaches the Auth object to the request object under the 'auth' key.
+app.use(
+  clerkMiddleware({
+    publishableKey: process.env.PUBLISHABLE_KEY,
+    secretKey: process.env.CLERK_SECRET_KEY,
+  })
+);
 
-// Handle routes not set by API
-app.get("*", (_req, res) => {
-  res.send("Page not found");
+// Get authentication info
+app.get("/api/auth-state", (req, res) => {
+  res.json(req.auth);
 });
 
-// Start server and connect to database
+//* Chats routes
+app.use("/api/chats", chatsRoute); // Clerk protects routes internally
+app.use("/api/user-chats", userChatsRoute);
+
+//* Serve static files in production
+// TODO Uncomment in production
+// app.use(express.static(path.join(__dirname, "../client/dist")));
+
+app.get("*", (_req, res) => {
+  res.send("Page not found !");
+});
+
+//* Start server and launch database
 app.listen(PORT, () => {
   connect();
-  console.log(`Server listening at http://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

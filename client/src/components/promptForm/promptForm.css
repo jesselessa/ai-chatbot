@@ -11,15 +11,19 @@
 #prompt-form-input {
   flex: 1;
   resize: none;
-  height: 100%;
   font-size: 16px;
   background-color: transparent;
   color: #ececec;
   border: none;
   outline: none;
+  overflow-y: scroll;
   scrollbar-width: thin; /* For Firefox */
   scrollbar-color: #2c2937 transparent; /* Thumb and track colors */
   padding: 20px 5px 20px 50px;
+}
+
+#prompt-form-input::placeholder {
+  color: #888;
 }
 
 #prompt-form-input::-webkit-scrollbar {
