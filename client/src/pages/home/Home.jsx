@@ -68,12 +68,12 @@ const Home = () => {
                 () => {
                   setTypingStatus("jane");
                 },
-                "Jane : How many countries in the EU\u00A0?",
+                "Jane : How much are 15\u00A0x\u00A015\u00A0?",
                 2000,
                 () => {
                   setTypingStatus("bot");
                 },
-                "Bot : There are 27 countries in the European Union.",
+                "Bot : 15 x 15 = 225",
                 2000,
                 () => {
                   setTypingStatus("john");
