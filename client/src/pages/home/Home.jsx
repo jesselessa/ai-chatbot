@@ -58,22 +58,22 @@ const Home = () => {
             {/* Animated text */}
             <TypeAnimation
               sequence={[
-                "John : What is the capital of France ?",
+                "John : What is the capital of France\u00A0?",
                 2000, // A callback function is added after each animation
                 () => {
                   setTypingStatus("bot");
                 },
-                "Bot : Paris is the capital of France",
+                "Bot : Paris is the capital of France.",
                 2000,
                 () => {
                   setTypingStatus("jane");
                 },
-                "Jane : What time is it ?",
+                "Jane : How many countries in the EU\u00A0?",
                 2000,
                 () => {
                   setTypingStatus("bot");
                 },
-                "Bot : It's 3 PM",
+                "Bot : There are 27 countries in the European Union.",
                 2000,
                 () => {
                   setTypingStatus("john");

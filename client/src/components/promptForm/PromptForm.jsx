@@ -32,14 +32,15 @@ const PromptForm = ({
     <form className="prompt-form" name="prompt-form" onSubmit={handleSubmit}>
       {includeFileInput && <Upload setImg={setImg} />}
 
-      <textarea
-        id="prompt-form-input"
+      <input
+        type="text"
+        id="text"
         name="text"
-        rows={3}
         placeholder="Ask me anything..."
-      ></textarea>
+        autoComplete="off"
+      />
 
-      <button className="send-btn">
+      <button type="submit" className="send-btn">
         <img src="/arrow.png" alt="arrow" />
       </button>
     </form>

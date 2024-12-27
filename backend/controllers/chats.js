@@ -22,11 +22,14 @@ export const getChat = async (req, res) => {
 export const addNewChat = async (req, res) => {
   const { userId } = req.auth;
   const { text } = req.body;
+  // const { text, img } = req.body;
 
   try {
+    // Create a new chat with or without image
     const newChat = new Chat({
       userId,
       history: [{ role: "user", parts: [{ text }] }],
+      // history: [{ role: "user", parts: [{ text }], ...(img && { img }) }],
     });
 
     const savedChat = await newChat.save();
@@ -34,11 +37,13 @@ export const addNewChat = async (req, res) => {
     const userChats = await UserChats.findOne({ userId });
 
     if (!userChats) {
+      // If it's user first chat
       await new UserChats({
         userId,
         chats: [{ _id: savedChat._id, title: text.substring(0, 40) }],
       }).save();
     } else {
+      // Add chat to user chats list
       userChats.chats.push({
         _id: savedChat._id,
         title: text.substring(0, 40),

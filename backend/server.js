@@ -68,7 +68,7 @@ app.use("/api/chats", chatsRoute); // Clerk protects routes internally
 app.use("/api/user-chats", userChatsRoute);
 
 //* Serve static files in production
-// TODO Uncomment in production
+// TODO Uncomment below in production
 // app.use(express.static(path.join(__dirname, "../client/dist")));
 
 app.get("*", (_req, res) => {

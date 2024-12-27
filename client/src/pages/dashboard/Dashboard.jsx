@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./dashboard.css";
 import { useUser } from "@clerk/clerk-react";
 
@@ -13,7 +14,7 @@ const Dashboard = () => {
         <h1>
           {user?.firstName
             ? `Hello ${user?.firstName}\u00A0!`
-            : "Hello, I'm Jess AI\u00A0!"}
+            : "Hello, I'm Jessbot assistant\u00A0!"}
           <br />
           <span className="subtitle">How can I help you&nbsp;?</span>
         </h1>
