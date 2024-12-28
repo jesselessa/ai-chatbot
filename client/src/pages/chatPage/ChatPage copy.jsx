@@ -111,16 +111,30 @@ const ChatPage = () => {
   return (
     <div className="chatPage">
       <div className="chat">
-        {isPending ? (
-          <Loader />
-        ) : error ? (
-          "Something went wrong !"
-        ) : (
-          data?.history?.map((message, idx) => (
-            <div className="message user" key={idx}>
-              <Markdown>{message.parts[0].text}</Markdown>
-            </div>
-          ))
+        {/* Display loader while image is processing */}
+        {img.isLoading && (
+          <Loader width="30px" height="30px" border="3px solid transparent" />
+        )}
+
+        {/* Display uploaded image */}
+        {img.dbData?.filePath && (
+          <IKImage
+            urlEndpoint={import.meta.env.VITE_IMAGE_KIT_ENDPOINT}
+            path={img.dbData.filePath}
+            width="380"
+            transformation={[{ width: 380 }]}
+            ref={imgRef}
+            alt="uploaded image"
+          />
+        )}
+
+        {/* Display question and answer */}
+        {question && <div className="message user">{question}</div>}
+
+        {answer && (
+          <div className="message">
+            <Markdown>{answer}</Markdown>
+          </div>
         )}
 
         {/* Auto-scroll reference */}

@@ -9,7 +9,7 @@ import { clerkMiddleware } from "@clerk/express";
 import chatsRoute from "./routes/chats.js";
 import userChatsRoute from "./routes/userChats.js";
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
 const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -18,7 +18,7 @@ const __dirname = dirname(__filename);
 //* Allow cross-origin requests
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: [process.env.CLIENT_URL, process.env.SERVER_URL],
     credentials: true,
   })
 );
@@ -32,7 +32,7 @@ const connect = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("Connected to MongoDB");
   } catch (err) {
-    console.log("Error connecting to database:", err);
+    console.error("Error connecting to database:", err);
   }
 };
 
@@ -50,33 +50,45 @@ app.get("/api/upload", (req, res) => {
 });
 
 //* Configure Clerk
-//! clerkMiddleware() checks the request's cookies and headers for a session JWT and, if found, attaches the Auth object to the request object under the 'auth' key.
-app.use(
-  clerkMiddleware({
-    publishableKey: process.env.PUBLISHABLE_KEY,
-    secretKey: process.env.CLERK_SECRET_KEY,
-  })
-);
+//! clerkMiddleware() checks the request's cookies and headers for a session JWT and, if found, attaches the Auth object to the request object under the 'auth' key
+app.use(clerkMiddleware());
 
 // Get authentication info
 app.get("/api/auth-state", (req, res) => {
   res.json(req.auth);
 });
 
-//* Chats routes
-app.use("/api/chats", chatsRoute); // Clerk protects routes internally
-app.use("/api/user-chats", userChatsRoute);
+// Check if user is authenticated
+const handleAuthErrors = (req, res, next) => {
+  if (!req.auth?.userId) {
+    return res.status(401).json({ error: "Unauthenticated user" });
+  }
+  next();
+};
+
+//* Protected routes
+app.use("/api/chats", handleAuthErrors, chatsRoute);
+app.use("/api/user-chats", handleAuthErrors, userChatsRoute);
 
 //* Serve static files in production
 // TODO Uncomment below in production
 // app.use(express.static(path.join(__dirname, "../client/dist")));
 
+//* Handle undefined routes
 app.get("*", (_req, res) => {
   res.send("Page not found !");
+});
+
+//* Handle errors globally
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({
+    error: err.message || "Internal Server Error",
+  });
 });
 
 //* Start server and launch database
 app.listen(PORT, () => {
   connect();
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is listening at http://localhost:${PORT}`);
 });

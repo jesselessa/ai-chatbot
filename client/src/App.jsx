@@ -21,7 +21,7 @@ const router = createBrowserRouter([
         element: <DashboardLayout />,
         children: [
           { path: "/dashboard", element: <Dashboard /> },
-          { path: "/dashboard/chats/:id", element: <ChatPage /> },
+          { path: "/dashboard/chats/:chatId", element: <ChatPage /> },
         ],
       },
       { path: "*", element: <Home /> },

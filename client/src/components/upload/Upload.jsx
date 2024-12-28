@@ -50,8 +50,8 @@ const Upload = ({ setImg }) => {
         ...prev,
         isLoading: true,
         aiData: {
+          // inlineData = GoogleGenerativeAI.Part object
           inlineData: {
-            // inlineData = GoogleGenerativeAI.Part object
             data: reader.result.split(",")[1], // Image code version
             mimeType: file.type,
           },

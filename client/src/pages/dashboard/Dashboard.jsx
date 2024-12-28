@@ -1,4 +1,3 @@
-import { useState } from "react";
 import "./dashboard.css";
 import { useUser } from "@clerk/clerk-react";
 
@@ -8,13 +7,29 @@ import PromptForm from "../../components/promptForm/PromptForm.jsx";
 const Dashboard = () => {
   const { user } = useUser();
 
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Handle text field
+    const text = e.target.text.value.trim();
+    if (!text) return;
+
+    await fetch(`${import.meta.env.VITE_API_URL}/api/chats`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ text }),
+    });
+  };
+
   return (
     <div className="dashboard">
       <div className="texts">
         <h1>
           {user?.firstName
-            ? `Hello ${user?.firstName}\u00A0!`
-            : "Hello, I'm Jessbot assistant\u00A0!"}
+            ? `Hello ${user.firstName}\u00A0!`
+            : "Hello, I'm Jessbot\u00A0!"}
           <br />
           <span className="subtitle">How can I help you&nbsp;?</span>
         </h1>
@@ -37,7 +52,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <PromptForm includeFileInput={false} />
+      <PromptForm includeFileInput={false} onSubmit={handleSubmit} />
     </div>
   );
 };

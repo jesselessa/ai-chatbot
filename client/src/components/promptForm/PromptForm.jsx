@@ -6,26 +6,32 @@ import Upload from "../upload/Upload.jsx";
 
 const PromptForm = ({
   includeFileInput = true,
-  setQuestion,
-  img,
+  // setQuestion,
+  // setAnswer,
   setImg,
-  generateResponse,
+  // generateResponse,
 }) => {
-  // Handle form
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Handle text field
     const text = e.target.text.value.trim();
-
     if (!text) {
-      setQuestion("Ask your question.");
+      // setQuestion("Ask your question.");
       return;
     }
 
-    setQuestion(text); // Update question in ChatPage
-    await generateResponse(text); // Call generateResponse from ChatPage
-    e.target.reset(); // Reset form after submission
+    // setQuestion(text); // Update parent state
+    // await generateResponse(text);
+    // e.target.reset(); // Reset form after submission
+
+    await fetch(`${import.meta.env.VITE_API_URL}/api/chats`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ text }),
+    });
   };
 
   return (

@@ -1,7 +1,19 @@
 import "./menu.css";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+
+// Component
+import Loader from "../loader/Loader.jsx";
 
 const Menu = () => {
+  const { isPending, error, data } = useQuery({
+    queryKey: ["userChats"],
+    queryFn: () =>
+      fetch(`${import.meta.env.VITE_API_URL}/api/user-chats`, {
+        credentials: "include",
+      }).then((res) => res.json()),
+  });
+
   return (
     <div className="menu">
       <span className="title">DASHBOARD</span>
@@ -11,20 +23,19 @@ const Menu = () => {
 
       <hr />
 
-      <span className="title">LATEST CHATS</span>
+      <span className="title">RECENT CHATS</span>
       <div className="list">
-        <Link to="/">My chat title</Link>
-        <Link to="/">My chat title</Link>
-        <Link to="/">My chat title</Link>
-        <Link to="/">My chat title</Link>
-        <Link to="/">My chat title</Link>
-        <Link to="/">My chat title</Link>
-        <Link to="/">My chat title</Link>
-        <Link to="/">My chat title</Link>
-        <Link to="/">My chat title</Link>
-        <Link to="/">My chat title</Link>
-        <Link to="/">My chat title</Link>
-        <Link to="/">My chat title</Link>
+        {isPending ? (
+          <Loader width="30px" height="30px" border="3px solid transparent" />
+        ) : error ? (
+          "Something went wrong !"
+        ) : (
+          data?.map((chat) => (
+            <Link to={`/dashboard/chats/${chat._id}`} key={chat._id}>
+              {chat.title}
+            </Link>
+          ))
+        )}
       </div>
 
       <hr />

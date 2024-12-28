@@ -44,7 +44,7 @@ const Home = () => {
                   ? "/john.jpeg"
                   : typingStatus === "jane"
                   ? "/jane.jpg"
-                  : "bot.png"
+                  : "/bot.png"
               }
               alt={
                 typingStatus === "john"
