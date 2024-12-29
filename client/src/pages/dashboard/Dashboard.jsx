@@ -1,5 +1,8 @@
+import { useState } from "react";
 import "./dashboard.css";
 import { useUser } from "@clerk/clerk-react";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 // Component
 import PromptForm from "../../components/promptForm/PromptForm.jsx";
@@ -7,20 +10,38 @@ import PromptForm from "../../components/promptForm/PromptForm.jsx";
 const Dashboard = () => {
   const { user } = useUser();
 
+  const navigate = useNavigate();
+
+  // Access the client
+  const queryClient = useQueryClient();
+
+  // Create a new chat
+  const mutation = useMutation({
+    mutationFn: async (text) => {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/chats`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      }).then((res) => res.json());
+    },
+    onSuccess: (chatId) => {
+      queryClient.invalidateQueries({ queryKey: ["userChats"] });
+      navigate(`/dashboard/chats/${chatId}`);
+    },
+    onError: (err) => {
+      console.error("Error creating chat:", err.message);
+    },
+  });
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Handle text field
     const text = e.target.text.value.trim();
     if (!text) return;
 
-    await fetch(`${import.meta.env.VITE_API_URL}/api/chats`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ text }),
-    });
+    mutation.mutate(text);
   };
 
   return (

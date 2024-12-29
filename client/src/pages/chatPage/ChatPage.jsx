@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { useRef, useState, useEffect } from "react";
 import "./chatPage.css";
 import { useParams } from "react-router-dom";
@@ -26,6 +27,7 @@ const ChatPage = () => {
 
   const { chatId } = useParams();
 
+  // Fetch single chat
   const { isPending, error, data } = useQuery({
     queryKey: ["chat", chatId],
     queryFn: () =>
@@ -116,10 +118,30 @@ const ChatPage = () => {
         ) : error ? (
           "Something went wrong !"
         ) : (
-          data?.history?.map((message, idx) => (
-            <div className="message user" key={idx}>
-              <Markdown>{message.parts[0].text}</Markdown>
-            </div>
+          data?.history?.map((message) => (
+            <Fragment key={message._id}>
+              {message.img && (
+                <IKImage
+                  urlEndpoint={import.meta.env.VITE_IMAGE_KIT_ENDPOINT}
+                  path={message.img}
+                  width="400"
+                  height="300"
+                  transformation={[{ width: 400, height: 300 }]}
+                  loading="lazy"
+                  lqip={{ active: true, quality: 20 }} // During process of lazy loading, show a low quality version of image
+                  ref={imgRef}
+                  alt="uploaded image"
+                />
+              )}
+
+              <div
+                className={
+                  message.role === "user" ? "message user" : "message "
+                }
+              >
+                <Markdown>{message.parts[0].text}</Markdown>
+              </div>
+            </Fragment>
           ))
         )}
 
@@ -127,12 +149,7 @@ const ChatPage = () => {
         <div className="chat-end" ref={chatEndRef}></div>
       </div>
 
-      <PromptForm
-        setImg={setImg}
-        generateResponse={generateResponse}
-        onSubmit={handleSubmit}
-        ref={formRef}
-      />
+      <PromptForm setImg={setImg} onSubmit={handleSubmit} ref={formRef} />
     </div>
   );
 };

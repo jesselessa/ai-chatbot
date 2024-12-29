@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import Loader from "../loader/Loader.jsx";
 
 const Menu = () => {
+  // Fetch user chats
   const { isPending, error, data } = useQuery({
     queryKey: ["userChats"],
     queryFn: () =>
@@ -24,17 +25,20 @@ const Menu = () => {
       <hr />
 
       <span className="title">RECENT CHATS</span>
+
       <div className="list">
         {isPending ? (
           <Loader width="30px" height="30px" border="3px solid transparent" />
         ) : error ? (
-          "Something went wrong !"
-        ) : (
-          data?.map((chat) => (
+          <p>Something went wrong&nbsp;! Please, try again later.</p>
+        ) : Array.isArray(data) ? (
+          data.map((chat) => (
             <Link to={`/dashboard/chats/${chat._id}`} key={chat._id}>
               {chat.title}
             </Link>
           ))
+        ) : (
+          <p>No chat available.</p>
         )}
       </div>
 

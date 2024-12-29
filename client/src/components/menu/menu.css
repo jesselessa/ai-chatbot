@@ -42,6 +42,10 @@ hr {
   border-radius: 10px;
 }
 
+.list p {
+  font-size: 15px;
+}
+
 .menu a {
   width: 98%; /* Mild space between chat title on hover and scrollbar */
   font-size: 15px;
