@@ -1,5 +1,6 @@
 import Chat from "../models/chat.js";
 import UserChats from "../models/userChats.js";
+import { imagekit } from "../config/imageKit.js";
 
 // Get a specific chat
 export const getChat = async (req, res, next) => {
@@ -9,7 +10,7 @@ export const getChat = async (req, res, next) => {
   try {
     const chat = await Chat.findOne({ _id: chatId, userId });
     if (!chat) return res.status(404).json({ message: "No chat found" });
-    
+
     res.status(200).json(chat);
   } catch (err) {
     console.error("Error fetching chat:", err);
@@ -25,7 +26,13 @@ export const addNewChat = async (req, res, next) => {
   try {
     const newChat = new Chat({
       userId,
-      history: [{ role: "user", parts: [{ text }], ...(img && { img }) }],
+      history: [
+        { 
+          role: "user",
+          parts: [{ text }], 
+          ...(img && { img }) 
+        }
+      ],
     });
     const savedChat = await newChat.save();
 
@@ -35,7 +42,9 @@ export const addNewChat = async (req, res, next) => {
     if (!userChats) {
       await new UserChats({
         userId,
-        chats: [{ _id: savedChat._id, title: text.substring(0, 40) }], // Title limited to the 1st 40 characters
+        chats: [
+          { _id: savedChat._id, title: text?.substring(0, 40) || "Image Chat" },
+        ], // Title limited to the 1st 40 characters
       }).save();
     } else {
       // Add chat to existing list
@@ -45,7 +54,7 @@ export const addNewChat = async (req, res, next) => {
           $push: {
             chats: {
               _id: savedChat._id,
-              title: text.substring(0, 40),
+              title: text?.substring(0, 40) || "Image Chat",
             },
           },
         }

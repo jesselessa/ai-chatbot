@@ -8,26 +8,42 @@ import { useNavigate } from "react-router-dom";
 import PromptForm from "../../components/promptForm/PromptForm.jsx";
 
 const Dashboard = () => {
+  const [question, setQuestion] = useState("");
+  const [img, setImg] = useState({
+    isLoading: false,
+    error: "",
+    dbData: {}, // IK uploaded image data
+    aiData: {}, // Data generated via AI from image
+  });
+
   const { user } = useUser();
-
   const navigate = useNavigate();
-
-  // Access the client
   const queryClient = useQueryClient();
 
-  // Create a new chat
+  // Create a new chat mutation
   const mutation = useMutation({
-    mutationFn: async (text) => {
+    mutationFn: async ({ text, img }) => {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/chats`, {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
-      }).then((res) => res.json());
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text, img }),
+      });
+      if (!res.ok) {
+        throw new Error(`Failed to create chat: ${res.statusText}`);
+      }
+      const data = await res.json();
+      return data;
     },
-    onSuccess: (chatId) => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["userChats"] });
-      navigate(`/dashboard/chats/${chatId}`);
+      if (data?.chatId) {
+        navigate(`/dashboard/chats/${data.chatId}`);
+      } else {
+        console.error("Chat ID missing in server response");
+      }
     },
     onError: (err) => {
       console.error("Error creating chat:", err.message);
@@ -37,11 +53,24 @@ const Dashboard = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const text = e.target.text.value.trim();
-    if (!text) return;
+    const imgUrl = img?.dbData?.url;
 
-    mutation.mutate(text);
+    if (!text && !imgUrl) {
+      console.error("Text or image is required to create a chat");
+      return;
+    }
+
+    setQuestion(text);
+    setImg((prev) => ({
+      ...prev,
+      dbData: { url: imgUrl },
+    }));
+
+    mutation.mutate({ text, img: imgUrl });
+
+    // Reset form after submission
+    setQuestion("");
   };
 
   return (
@@ -73,7 +102,7 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <PromptForm includeFileInput={false} onSubmit={handleSubmit} />
+      <PromptForm setImg={setImg} onSubmit={handleSubmit} />
     </div>
   );
 };
