@@ -2,7 +2,12 @@ import "./promptForm.css";
 import model from "../../lib/gemini.js";
 import Upload from "../upload/Upload.jsx";
 
-const PromptForm = ({ includeFileInput = true, onSubmit, setImg }) => {
+const PromptForm = ({
+  includeFileInput = true,
+  chatData,
+  onSubmit,
+  setImg,
+}) => {
   return (
     <form className="prompt-form" name="prompt-form" onSubmit={onSubmit}>
       {includeFileInput && <Upload setImg={setImg} />}

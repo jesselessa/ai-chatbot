@@ -26,9 +26,8 @@ const DashboardLayout = () => {
         </div>
       ) : (
         <div className="dashboardLayout">
-          <div className="menu">
-            <Menu />
-          </div>
+          <Menu />
+          
           <div className="content">
             {/* <Outlet /> acts as a placeholder where the child routes defined in the React Router configuration will be rendered */}
             <Outlet />

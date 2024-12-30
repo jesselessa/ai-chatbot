@@ -7,10 +7,10 @@ import Markdown from "react-markdown";
 import model from "../../lib/gemini.js";
 
 // Components
-import PromptForm from "../../components/promptForm/PromptForm";
-import Loader from "../../components/loader/Loader";
+import PromptForm from "../../components/promptForm/PromptForm.jsx";
+import Loader from "../../components/loader/Loader.jsx";
 
-const ChatPage = () => {
+const Copy = () => {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [img, setImg] = useState({
@@ -77,7 +77,7 @@ const ChatPage = () => {
       setImg({
         isLoading: false,
         error: "",
-        dbData: { filePath: "" },
+        dbData: {},
         aiData: {},
       });
     } catch (error) {
@@ -120,11 +120,13 @@ const ChatPage = () => {
         {img.dbData?.filePath && (
           <IKImage
             urlEndpoint={import.meta.env.VITE_IMAGE_KIT_ENDPOINT}
-            path={img.dbData.filePath}
-            width="380"
-            transformation={[{ width: 380 }]}
-            ref={imgRef}
-            alt="uploaded image"
+            path={message.img}
+            width="400"
+            height="300"
+            transformation={[{ width: 400, height: 300 }]}
+            loading="lazy"
+            // During process of lazy loading, show a loer quality image
+            lqip={{ active: true, quality: 20 }}
           />
         )}
 
@@ -151,4 +153,4 @@ const ChatPage = () => {
   );
 };
 
-export default ChatPage;
+export default Copy;

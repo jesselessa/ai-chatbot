@@ -1,6 +1,5 @@
 import Chat from "../models/chat.js";
 import UserChats from "../models/userChats.js";
-import { imagekit } from "../config/imageKit.js";
 
 // Get a specific chat
 export const getChat = async (req, res, next) => {
@@ -27,27 +26,30 @@ export const addNewChat = async (req, res, next) => {
     const newChat = new Chat({
       userId,
       history: [
-        { 
+        {
           role: "user",
-          parts: [{ text }], 
-          ...(img && { img }) 
-        }
+          parts: [{ text }],
+          ...(img && { img }),
+        },
       ],
     });
     const savedChat = await newChat.save();
 
-    // Check if list of user chats exists
+    // Check if an array with user chats exists
     const userChats = await UserChats.findOne({ userId });
-    // If not, create a new one and store new chat in it
+    // If not, create a new one and add chat
     if (!userChats) {
       await new UserChats({
         userId,
         chats: [
-          { _id: savedChat._id, title: text?.substring(0, 40) || "Image Chat" },
+          {
+            _id: savedChat._id,
+            title: text?.substring(0, 40) || "Image Chat",
+          },
         ], // Title limited to the 1st 40 characters
       }).save();
     } else {
-      // Add chat to existing list
+      // Add chat to existing array
       await UserChats.updateOne(
         { userId },
         {

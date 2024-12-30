@@ -28,7 +28,12 @@ const authenticator = async () => {
 
 const Upload = ({ setImg }) => {
   const onError = (err) => {
-    console.log("Error", err);
+    console.error("Error during upload", err);
+    setImg((prev) => ({
+      ...prev,
+      isLoading: false,
+      error: err.message,
+    }));
   };
 
   const onSuccess = (res) => {
@@ -36,7 +41,7 @@ const Upload = ({ setImg }) => {
     setImg((prev) => ({
       ...prev,
       isLoading: false,
-      dbData: res, // res.url = image URL
+      dbData: { url: res.url }, // Image URL
     }));
   };
 

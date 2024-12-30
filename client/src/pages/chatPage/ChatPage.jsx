@@ -1,5 +1,4 @@
-import { Fragment } from "react";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, Fragment } from "react";
 import "./chatPage.css";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -17,24 +16,13 @@ const ChatPage = () => {
   const [img, setImg] = useState({
     isLoading: false,
     error: "",
-    dbData: {},
+    dbData: {}, // IK uploaded image data
     aiData: {}, // Data generated via AI from image
   });
 
   const chatEndRef = useRef(null);
-  const imgRef = useRef(null);
-  const formRef = useRef(null);
 
   const { chatId } = useParams();
-
-  // Fetch single chat
-  const { isPending, error, data } = useQuery({
-    queryKey: ["chat", chatId],
-    queryFn: () =>
-      fetch(`${import.meta.env.VITE_API_URL}/api/chats/${chatId}`, {
-        credentials: "include",
-      }).then((res) => res.json()),
-  });
 
   // Automatically scroll to the bottom when new content is added
   useEffect(() => {
@@ -42,84 +30,53 @@ const ChatPage = () => {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
   }, [question, answer, img.dbData]);
 
-  // Chat history and configuration
-  const chat = model.startChat({
-    history: [
-      {
-        role: "user",
-        parts: [{ text: "Hello" }],
-      },
-      {
-        role: "model",
-        parts: [{ text: "Great to meet you. What would you like to know?" }],
-      },
-    ],
-    generationConfig: {
-      // maxOutputTokens: 100,
-    },
-  });
-
-  const generateResponse = async (prompt) => {
-    setAnswer(""); // Reset answer before accumulating text
-
+  // Fetch chat data
+  const fetchChatData = async (chatId) => {
     try {
-      // Send message with or without image
-      const result = await chat.sendMessageStream(
-        Object.entries(img.aiData).length ? [img.aiData, prompt] : [prompt]
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/chats/${chatId}`,
+        {
+          credentials: "include",
+        }
       );
-
-      // Accumulate IA answer
-      let accumulatedText = "";
-      for await (const chunk of result.stream) {
-        accumulatedText += chunk.text();
-        setAnswer(accumulatedText);
+      if (!res.ok) {
+        throw new Error(`Failed to fetch chat data: ${res.statusText}`);
       }
 
-      // Reset image state
-      setImg({
-        isLoading: false,
-        error: "",
-        dbData: { filePath: "" },
-        aiData: {},
-      });
-    } catch (error) {
-      if (error.message.includes("SAFETY")) {
-        setAnswer(
-          "I'm sorry, I can't answer this request. Try another question."
-        );
-      } else {
-        console.error("Error generating content:", error);
-        setAnswer("An error occurred. Please try again.");
-      }
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      console.error("Error in fetchChatData:", err.message);
+      throw err;
     }
   };
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
+  const {
+    isLoading,
+    error,
+    data: chatData,
+  } = useQuery({
+    queryKey: ["chat", chatId],
+    queryFn: () => fetchChatData(chatId),
+  });
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Handle text field
-    const text = e.target.text.value.trim();
-    if (!text) {
-      setQuestion("Ask your question.");
-      return;
-    }
-
-    setQuestion(text); // Update parent state
-    await generateResponse(text);
-    e.target.reset(); // Reset form after submission
+    console.log("Form sent !");
+    e.target.reset(); // Clear form after submission
   };
 
   return (
     <div className="chatPage">
       <div className="chat">
-        {isPending ? (
+        {isLoading ? (
           <Loader />
         ) : error ? (
-          "Something went wrong !"
+          <p>Something went wrong! Please try again later.</p>
         ) : (
-          data?.history?.map((message) => (
+          chatData?.history?.map((message, index) => (
             <Fragment key={message._id}>
+              {/* Show image (optional) */}
               {message.img && (
                 <IKImage
                   urlEndpoint={import.meta.env.VITE_IMAGE_KIT_ENDPOINT}
@@ -128,16 +85,14 @@ const ChatPage = () => {
                   height="300"
                   transformation={[{ width: 400, height: 300 }]}
                   loading="lazy"
-                  lqip={{ active: true, quality: 20 }} // During process of lazy loading, show a low quality version of image
-                  ref={imgRef}
-                  alt="uploaded image"
+                  // During process of lazy loading, show low quality image
+                  lqip={{ active: true, quality: 20 }}
                 />
               )}
 
+              {/* Show questions and answers */}
               <div
-                className={
-                  message.role === "user" ? "message user" : "message "
-                }
+                className={message.role === "user" ? "message user" : "message"}
               >
                 <Markdown>{message.parts[0].text}</Markdown>
               </div>
@@ -145,11 +100,11 @@ const ChatPage = () => {
           ))
         )}
 
-        {/* Auto-scroll reference */}
-        <div className="chat-end" ref={chatEndRef}></div>
+        {/* Auto-scroll anchor */}
+        <div ref={chatEndRef} />
       </div>
 
-      <PromptForm setImg={setImg} onSubmit={handleSubmit} ref={formRef} />
+      <PromptForm chatData={chatData} onSubmit={handleSubmit} />
     </div>
   );
 };
