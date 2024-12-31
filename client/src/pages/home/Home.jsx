@@ -11,7 +11,7 @@ const Home = () => {
       <img src="/orbital.png" alt="orbital" className="orbital" />
       {/* Left */}
       <div className="left">
-        <h1>ASK&nbsp;JOSIE</h1>
+        <h1>ASK&nbsp;JESSBOT</h1>
         <h2>
           Your friendly mini assistant for big ideas and quick&nbsp;answers
         </h2>

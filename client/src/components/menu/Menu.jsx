@@ -55,10 +55,10 @@ const Menu = () => {
         ) : Array.isArray(userChats) ? (
           userChats.map((chat) => (
             <Link to={`/dashboard/chats/${chat._id}`} key={chat._id}>
-              {/* Title limited to the 1st 25 characters*/}
+              {/* Title limited to the 1st 20 characters*/}
               <p className="chat-title">
-                {chat.title.length > 25
-                  ? `${chat.title.slice(0, 25)}...`
+                {chat.title.length > 20
+                  ? `${chat.title.substring(0, 20)}...`
                   : chat.title}
               </p>
             </Link>

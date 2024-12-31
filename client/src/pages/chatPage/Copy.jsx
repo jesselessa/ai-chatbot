@@ -58,7 +58,7 @@ const Copy = () => {
   });
 
   const generateResponse = async (prompt) => {
-    setAnswer(""); // Reset answer before accumulating text
+    setAnswer(""); // Reset before accumulating text
 
     try {
       // Send message with or without image

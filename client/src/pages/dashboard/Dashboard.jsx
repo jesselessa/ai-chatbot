@@ -25,9 +25,7 @@ const Dashboard = () => {
         },
         body: JSON.stringify({ text }),
       });
-      if (!res.ok) {
-        throw new Error(`Failed to create chat: ${res.statusText}`);
-      }
+      if (!res.ok) throw new Error(`Failed to create chat: ${res.statusText}`);
 
       const data = await res.json();
       return data;
@@ -41,7 +39,8 @@ const Dashboard = () => {
     mutationFn: ({ text }) => createChat(text),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["userChats"] });
-      navigate(`/dashboard/chats/${data.chatId}`);
+      setQuestion(""); // Clear form after submission
+      navigate(`/dashboard/chats/${data.chatId}`); // Redirect to ChatPage
     },
     onError: (err) => {
       console.error("Error creating chat:", err.message);
@@ -58,9 +57,7 @@ const Dashboard = () => {
       console.error("Text is required to create a chat");
       return;
     }
-
     mutation.mutate({ text });
-    setQuestion(""); // Clear form after submission
   };
 
   return (
@@ -92,7 +89,12 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <PromptForm includeFileInput={false} onSubmit={handleSubmit} />
+      <PromptForm
+        includeFileInput={false}
+        question={question}
+        setQuestion={setQuestion}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 };

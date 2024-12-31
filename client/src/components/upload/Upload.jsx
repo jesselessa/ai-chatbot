@@ -7,7 +7,7 @@ const publicKey = import.meta.env.VITE_IMAGE_KIT_PUBLIC_KEY;
 // Get authentication info
 const authenticator = async () => {
   try {
-    const response = await fetch("http://localhost:8000/api/upload");
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`);
 
     // If not authenticated, we receive an error message
     if (!response.ok) {
@@ -41,7 +41,7 @@ const Upload = ({ setImg }) => {
     setImg((prev) => ({
       ...prev,
       isLoading: false,
-      dbData: { url: res.url }, // Image URL
+      dbData: res, // image URL = res.url
     }));
   };
 
@@ -80,7 +80,7 @@ const Upload = ({ setImg }) => {
       {/* IKUpload renders an input type="file" tag  */}
       <IKUpload
         id="prompt-form-file" // To match label tag
-        fileName="test-upload.png"
+        fileName="ik-upload"
         useUniqueFileName={true}
         onError={onError}
         onSuccess={onSuccess}

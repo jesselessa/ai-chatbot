@@ -66,6 +66,10 @@
   margin: 0 20px 0 10px;
 }
 
+.hidden {
+  display: none;
+}
+
 .send-btn:active,
 .attachment-btn:active {
   transform: translateY(1.5px);

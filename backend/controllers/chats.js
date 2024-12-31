@@ -20,7 +20,7 @@ export const getChat = async (req, res, next) => {
 // Create a new chat
 export const addNewChat = async (req, res, next) => {
   const { userId } = req.auth;
-  const { text, img } = req.body;
+  const { text } = req.body;
 
   try {
     const newChat = new Chat({
@@ -29,7 +29,6 @@ export const addNewChat = async (req, res, next) => {
         {
           role: "user",
           parts: [{ text }],
-          ...(img && { img }),
         },
       ],
     });
@@ -37,6 +36,7 @@ export const addNewChat = async (req, res, next) => {
 
     // Check if an array with user chats exists
     const userChats = await UserChats.findOne({ userId });
+
     // If not, create a new one and add chat
     if (!userChats) {
       await new UserChats({
@@ -44,9 +44,9 @@ export const addNewChat = async (req, res, next) => {
         chats: [
           {
             _id: savedChat._id,
-            title: text?.substring(0, 40) || "Image Chat",
-          },
-        ], // Title limited to the 1st 40 characters
+            title: text?.length > 40 ? `${text.substring(0, 40)}...` : text,
+          }, // Title limited to the 1st 40 characters
+        ],
       }).save();
     } else {
       // Add chat to existing array
@@ -56,7 +56,7 @@ export const addNewChat = async (req, res, next) => {
           $push: {
             chats: {
               _id: savedChat._id,
-              title: text?.substring(0, 40) || "Image Chat",
+              title: text?.length > 40 ? `${text.substring(0, 40)}...` : text,
             },
           },
         }
@@ -78,6 +78,7 @@ export const updateChat = async (req, res, next) => {
   const { chatId } = req.params;
   const { question, answer, img } = req.body;
 
+  // Question(s) and answer(s) are sent together after getting the answer completed version
   const newItems = [
     ...(question
       ? [{ role: "user", parts: [{ text: question }], ...(img && { img }) }]
@@ -88,8 +89,31 @@ export const updateChat = async (req, res, next) => {
   try {
     const updatedChat = await Chat.updateOne(
       { _id: chatId, userId },
-      { $push: { history: { $each: newItems } } }
+      {
+        $push: {
+          history: {
+            $each: newItems,
+          },
+        },
+      }
     );
+
+    // Update chat title in UserChats based on the fact image is present or not in request 
+    const chatTitle = img
+      ? "Image Analyze"
+      : question?.length > 40
+      ? `${question.substring(0, 40)}...`
+      : question;
+
+    await UserChats.updateOne(
+      { userId, "chats._id": chatId },
+      {
+        $set: {
+          "chats.$.title": chatTitle,
+        },
+      }
+    );
+
     res.status(200).json(updatedChat);
   } catch (err) {
     console.error("Error updating chat:", err);
