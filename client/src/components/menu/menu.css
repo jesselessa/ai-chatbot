@@ -68,13 +68,13 @@ hr {
 .upgrade {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
   margin-top: auto;
 }
 
 .upgrade img {
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
 }
 
 .upgrade .texts {

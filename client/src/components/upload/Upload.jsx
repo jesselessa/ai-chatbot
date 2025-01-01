@@ -41,7 +41,7 @@ const Upload = ({ setImg }) => {
     setImg((prev) => ({
       ...prev,
       isLoading: false,
-      dbData: res, // image URL = res.url
+      dbData: res,
     }));
   };
 
@@ -80,7 +80,7 @@ const Upload = ({ setImg }) => {
       {/* IKUpload renders an input type="file" tag  */}
       <IKUpload
         id="prompt-form-file" // To match label tag
-        fileName="ik-upload"
+        fileName="ik_upload"
         useUniqueFileName={true}
         onError={onError}
         onSuccess={onSuccess}

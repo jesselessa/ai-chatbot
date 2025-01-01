@@ -16,6 +16,8 @@ const Menu = () => {
         }
       );
       if (!res.ok) {
+        if (res.status === 404) return []; // No chat found for user
+
         throw new Error(`Failed to fetch user chats: ${res.statusText}`);
       }
 
@@ -33,7 +35,7 @@ const Menu = () => {
     data: userChats,
   } = useQuery({
     queryKey: ["userChats"],
-    queryFn: fetchUserChats, // Utilisation directe
+    queryFn: fetchUserChats,
   });
 
   return (
@@ -52,10 +54,9 @@ const Menu = () => {
           <Loader width="30px" height="30px" border="3px solid transparent" />
         ) : error ? (
           <p>Something went wrong&nbsp;! Please, try again later.</p>
-        ) : Array.isArray(userChats) ? (
+        ) : userChats && userChats.length > 0 ? (
           userChats.map((chat) => (
             <Link to={`/dashboard/chats/${chat._id}`} key={chat._id}>
-              {/* Title limited to the 1st 20 characters*/}
               <p className="chat-title">
                 {chat.title.length > 20
                   ? `${chat.title.substring(0, 20)}...`

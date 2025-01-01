@@ -81,7 +81,11 @@ export const updateChat = async (req, res, next) => {
   // Question(s) and answer(s) are sent together after getting the answer completed version
   const newItems = [
     ...(question
-      ? [{ role: "user", parts: [{ text: question }], ...(img && { img }) }]
+      ? [{ role: "user", parts: [{ text: question }], 
+      ...(img && { img }) 
+    
+    }
+    ]
       : []),
     { role: "model", parts: [{ text: answer }] },
   ];
@@ -98,7 +102,7 @@ export const updateChat = async (req, res, next) => {
       }
     );
 
-    // Update chat title in UserChats based on the fact image is present or not in request 
+    // Update chat title in UserChats based on the fact image is present or not in request
     const chatTitle = img
       ? "Image Analyze"
       : question?.length > 40

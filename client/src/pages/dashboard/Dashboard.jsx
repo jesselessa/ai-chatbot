@@ -51,12 +51,9 @@ const Dashboard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const text = e.target.text.value.trim();
+    if (!text) return;
     setQuestion(text);
 
-    if (!text) {
-      console.error("Text is required to create a chat");
-      return;
-    }
     mutation.mutate({ text });
   };
 

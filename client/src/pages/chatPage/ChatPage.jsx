@@ -25,13 +25,6 @@ const ChatPage = () => {
   const { chatId } = useParams();
   const queryClient = useQueryClient();
 
-  // Automatically scroll to the bottom when new content is added
-  useEffect(() => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [question, answer, img.dbData]);
-
   // Fetch chat data
   const fetchChatData = async (chatId) => {
     try {
@@ -49,13 +42,21 @@ const ChatPage = () => {
   };
 
   const {
-    isLoading,
+    isPending,
     error,
     data: chatData,
   } = useQuery({
     queryKey: ["chat", chatId],
     queryFn: () => fetchChatData(chatId),
   });
+
+  // Automatically scroll to the bottom when new content is added
+  useEffect(() => {
+    if (chatEndRef.current) {
+      console.log("ChatEndRef.current", chatEndRef.current);
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatData?.history]);
 
   // Update chat data
   const updateChat = async (question, answer, img) => {
@@ -86,29 +87,35 @@ const ChatPage = () => {
       updateChat(question, answer, img),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["chat", chatId] });
+
       // Reset states
       setQuestion("");
       setAnswer("");
-      setImg({ isLoading: false, error: "", dbData: {}, aiData: {} });
+      setImg({
+        isLoading: false,
+        error: "",
+        dbData: {},
+        aiData: {},
+      });
     },
     onError: (err) => {
       console.error("Error updating chat:", err.message);
     },
   });
 
+  // Configure chat history
   const chat = model.startChat({
-    history: [
-      { role: "user", parts: [{ text: "Hello" }] },
-      {
-        role: "model",
-        parts: [{ text: "Great to meet you. What would you like to know?" }],
-      },
-    ],
+    history:
+      chatData?.history?.map(({ role, parts, img }) => ({
+        role,
+        parts: [{ text: parts[0].text }],
+        ...(img && { img }),
+      })) || [], // Fallback to an empty array if chatData.history is undefined
     generationConfig: {},
   });
 
+  // Generate AI response
   const generateResponse = async (prompt) => {
-    setAnswer("");
     try {
       const result = await chat.sendMessageStream(
         Object.keys(img.aiData).length ? [img.aiData, prompt] : [prompt]
@@ -120,7 +127,11 @@ const ChatPage = () => {
         setAnswer(accumulatedText);
       }
 
-      updateMutation.mutate({ question: prompt, answer: accumulatedText, img });
+      updateMutation.mutate({
+        question: prompt,
+        answer: accumulatedText,
+        img: img || undefined,
+      });
     } catch (error) {
       if (error.message.includes("SAFETY")) {
         setAnswer(
@@ -133,14 +144,9 @@ const ChatPage = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const text = e.target.text.value.trim();
-    console.log("e.target", e.target);
-    if (!text) {
-      setAnswer("Ask your question.");
-      return;
-    }
+  const handleSubmit = async (form) => {
+    const text = form.text.value.trim();
+    if (!text) return;
 
     setQuestion(text);
     await generateResponse(text);
@@ -149,24 +155,26 @@ const ChatPage = () => {
   return (
     <div className="chatPage">
       <div className="chat">
-        {isLoading ? (
+        {isPending ? (
           <Loader />
         ) : error ? (
           <p>Something went wrong&nbsp;! Please, try again later.</p>
         ) : (
-          chatData?.history?.map((message) => (
-            <Fragment key={message._id}>
+          chatData?.history?.map((message, index) => (
+            <Fragment key={index}>
               {message.img && (
                 <IKImage
                   urlEndpoint={import.meta.env.VITE_IMAGE_KIT_ENDPOINT}
-                  path={message.img}
-                  width="400"
+                  src={message.img}
                   height="300"
-                  transformation={[{ width: 400, height: 300 }]}
+                  width="400"
+                  transformation={[{ height: 300, width: 400 }]}
                   loading="lazy"
+                  // During process of lazy loading, show a loer quality image
                   lqip={{ active: true, quality: 20 }}
                 />
               )}
+
               <div
                 className={message.role === "user" ? "message user" : "message"}
               >

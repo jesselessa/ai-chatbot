@@ -38,9 +38,10 @@
   max-width: 85%;
   align-self: flex-start; /* AI message */
   background-color: #0e0c16;
+  line-height: 1.8;
   border-radius: 10px;
   word-break: break-word; /* Prevents text from overflowing div*/
-  padding: 5px 20px;
+  padding: 20px;
 }
 
 .user {
@@ -50,12 +51,10 @@
   text-decoration: underline;
 }
 
-.message ul,
-.message ol {
-  list-style: inside;
+.message li {
+  list-style-position: inside;
 }
 
-.message p,
-.message li {
-  margin: 10px 0;
+.message li::marker {
+  margin: 0;
 }

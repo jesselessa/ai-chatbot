@@ -14,13 +14,14 @@
   font-size: 16px;
   background-color: transparent;
   color: #ececec;
+  resize: none;
   border: none;
   outline: none;
   overflow-y: scroll;
   word-break: break-word;
   scrollbar-width: thin; /* For Firefox */
   scrollbar-color: #2c2937 transparent; /* Thumb and track colors */
-  padding: 10px 5px 10px 50px;
+  padding: 20px 5px 10px 50px;
 }
 
 #text::placeholder {
