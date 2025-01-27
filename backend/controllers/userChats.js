@@ -9,7 +9,7 @@ export const getUserChats = async (req, res, next) => {
     if (!userChats)
       return res.status(404).json({ message: "No chat found for this user" });
 
-    res.status(200).json(userChats.chats);
+    res.status(200).json(userChats.chats); // Array containing 1 or many objects with keys '_id', 'title' and 'createdAt'
   } catch (err) {
     console.error("Error fetching user chats:", err);
     next(err);

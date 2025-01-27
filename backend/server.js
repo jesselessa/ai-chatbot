@@ -4,13 +4,11 @@ import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
 import { fileURLToPath } from "url";
 import path, { dirname } from "path";
-
-// Import configurations and middlewares
+// Configurations and middlewares
 import { connectDB } from "./config/db.js";
 import { imagekit } from "./config/imageKit.js";
 import { handleAuthErrors } from "./middlewares/handleAuthErrors.js";
-
-// Import routes
+// Routes
 import chatsRoute from "./routes/chats.js";
 import userChatsRoute from "./routes/userChats.js";
 
@@ -22,30 +20,30 @@ const __dirname = dirname(__filename);
 //* Middlewares
 app.use(
   cors({
-    origin: [process.env.CLIENT_URL, process.env.SERVER_URL],
+    origin: process.env.CLIENT_URL,
     credentials: true,
   })
 );
 app.use(express.json());
-app.use(clerkMiddleware()); //! ClerkMiddleware checks the request's cookies and headers for a session JWT and, if found, attaches the Auth object to the request object under the 'auth' key
+app.use(clerkMiddleware()); //! ClerkMiddleware checks the request cookies and headers for a session JWT and, if found, attaches the Auth object to the request object under the 'auth' key
 
 //* Routes
 // ImageKit authentication info
-app.get("/api/upload", (req, res) => {
+app.get("/upload", (req, res) => {
   const result = imagekit.getAuthenticationParameters();
   res.send(result);
 });
 
 // Clerk authentication info
-app.get("/api/auth-state", (req, res) => {
+app.get("/auth-state", (req, res) => {
   return res.json(req.auth);
 });
 
 // Protected "chats" routes
-app.use("/api/chats", handleAuthErrors, chatsRoute);
-app.use("/api/user-chats", handleAuthErrors, userChatsRoute);
+app.use("/chats", handleAuthErrors, chatsRoute);
+app.use("/user-chats", handleAuthErrors, userChatsRoute);
 
-// Serve static files in production
+//* Serve static files in production
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../client/dist")));
 
@@ -55,14 +53,14 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// Handle undefined routes for non-production environments
+//* Handle undefined routes for non-production environments
 if (process.env.NODE_ENV !== "production") {
   app.get("*", (req, res) => {
     res.status(404).json({ error: "Page not found!" });
   });
 }
 
-// Handle errors globally
+//* Handle errors globally
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res

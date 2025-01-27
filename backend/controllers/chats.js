@@ -10,7 +10,7 @@ export const getChat = async (req, res, next) => {
     const chat = await Chat.findOne({ _id: chatId, userId });
     if (!chat) return res.status(404).json({ message: "No chat found" });
 
-    res.status(200).json(chat);
+    res.status(200).json(chat); // An object with keys '_id', 'userId', 'history', 'createdAt' and 'updatedAt'
   } catch (err) {
     console.error("Error fetching chat:", err);
     next(err); // Propagate error to global middleware
@@ -21,6 +21,9 @@ export const getChat = async (req, res, next) => {
 export const addNewChat = async (req, res, next) => {
   const { userId } = req.auth;
   const { text } = req.body;
+
+  // Define chat title
+  const chatTitle = text?.length > 40 ? `${text.substring(0, 40)}...` : text;
 
   try {
     const newChat = new Chat({
@@ -44,8 +47,8 @@ export const addNewChat = async (req, res, next) => {
         chats: [
           {
             _id: savedChat._id,
-            title: text?.length > 40 ? `${text.substring(0, 40)}...` : text,
-          }, // Title limited to the 1st 40 characters
+            title: chatTitle,
+          },
         ],
       }).save();
     } else {
@@ -56,16 +59,17 @@ export const addNewChat = async (req, res, next) => {
           $push: {
             chats: {
               _id: savedChat._id,
-              title: text?.length > 40 ? `${text.substring(0, 40)}...` : text,
+              title: chatTitle,
             },
           },
         }
       );
     }
 
-    res
-      .status(201)
-      .json({ message: "Chat saved successfully", chatId: savedChat._id });
+    res.status(201).json({
+      message: "Chat saved successfully",
+      chatId: savedChat._id,
+    });
   } catch (err) {
     console.error("Error creating chat:", err);
     next(err);
@@ -78,17 +82,19 @@ export const updateChat = async (req, res, next) => {
   const { chatId } = req.params;
   const { question, answer, img } = req.body;
 
-  // Question(s) and answer(s) are sent together after getting the answer completed version
   const newItems = [
     ...(question
-      ? [{ role: "user", parts: [{ text: question }], 
-      ...(img && { img }) 
-    
-    }
-    ]
+      ? [{ role: "user", parts: [{ text: question }], ...(img && { img }) }]
       : []),
     { role: "model", parts: [{ text: answer }] },
   ];
+
+  // Define chat title based on the presence of image in update request
+  const chatTitle = img
+    ? "Image Analyze"
+    : question?.length > 40
+    ? `${question.substring(0, 40)}...`
+    : question;
 
   try {
     const updatedChat = await Chat.updateOne(
@@ -102,13 +108,7 @@ export const updateChat = async (req, res, next) => {
       }
     );
 
-    // Update chat title in UserChats based on the fact image is present or not in request
-    const chatTitle = img
-      ? "Image Analyze"
-      : question?.length > 40
-      ? `${question.substring(0, 40)}...`
-      : question;
-
+    // Update user's chats with new title
     await UserChats.updateOne(
       { userId, "chats._id": chatId },
       {

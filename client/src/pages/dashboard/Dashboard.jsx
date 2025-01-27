@@ -8,25 +8,26 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 import PromptForm from "../../components/promptForm/PromptForm.jsx";
 
 const Dashboard = () => {
-  const [question, setQuestion] = useState("");
+  const [text, setText] = useState("");
 
   const { user } = useUser();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient(); // Access the client
 
   // Create a new chat
   const createChat = async (text) => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/chats`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/chats`, {
         method: "POST",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({
+          text,
+        }),
       });
       if (!res.ok) throw new Error(`Failed to create chat: ${res.statusText}`);
-
       const data = await res.json();
       return data;
     } catch (err) {
@@ -36,10 +37,10 @@ const Dashboard = () => {
   };
 
   const mutation = useMutation({
-    mutationFn: ({ text }) => createChat(text),
+    mutationFn: (text) => createChat(text),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["userChats"] });
-      setQuestion(""); // Clear form after submission
+      setText(""); // Clear form after submission
       navigate(`/dashboard/chats/${data.chatId}`); // Redirect to ChatPage
     },
     onError: (err) => {
@@ -48,13 +49,13 @@ const Dashboard = () => {
   });
 
   // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const text = e.target.text.value.trim();
-    if (!text) return;
-    setQuestion(text);
+  const handleSubmit = async (form) => {
+    // Access textarea via its attribute name:text using form reference
+    const prompt = form.text.value.trim();
+    if (!prompt) return;
 
-    mutation.mutate({ text });
+    setText(prompt);
+    mutation.mutate(prompt);
   };
 
   return (
@@ -88,8 +89,8 @@ const Dashboard = () => {
 
       <PromptForm
         includeFileInput={false}
-        question={question}
-        setQuestion={setQuestion}
+        question={text}
+        setQuestion={setText}
         onSubmit={handleSubmit}
       />
     </div>

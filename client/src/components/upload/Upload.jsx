@@ -1,13 +1,13 @@
+import { useRef } from "react";
 import { IKContext, IKUpload } from "imagekitio-react";
 
-//* Configure ImageKit authentication
+//* Configure ImageKit for client-side upload
 const urlEndpoint = import.meta.env.VITE_IMAGE_KIT_ENDPOINT;
 const publicKey = import.meta.env.VITE_IMAGE_KIT_PUBLIC_KEY;
 
-// Get authentication info
 const authenticator = async () => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`);
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/upload`);
 
     // If not authenticated, we receive an error message
     if (!response.ok) {
@@ -37,7 +37,7 @@ const Upload = ({ setImg }) => {
   };
 
   const onSuccess = (res) => {
-    console.log("Success", res); // IK uploaded image data
+    console.log("Success", res); // Uploaded image data
     setImg((prev) => ({
       ...prev,
       isLoading: false,
@@ -58,10 +58,10 @@ const Upload = ({ setImg }) => {
       setImg((prev) => ({
         ...prev,
         isLoading: true,
+        //! 'aiData' represents an object that represents the image file in a format that the Gemini API can understand and use for multimodal generation (cf. doc : 'Generate text from text-and-image input')
         aiData: {
-          // inlineData = GoogleGenerativeAI.Part object
           inlineData: {
-            data: reader.result.split(",")[1], // Image code version
+            data: reader.result.split(",")[1], // Extract base64 data from file
             mimeType: file.type,
           },
         },
@@ -80,7 +80,7 @@ const Upload = ({ setImg }) => {
       {/* IKUpload renders an input type="file" tag  */}
       <IKUpload
         id="prompt-form-file" // To match label tag
-        fileName="ik_upload"
+        fileName="jessbot"
         useUniqueFileName={true}
         onError={onError}
         onSuccess={onSuccess}

@@ -12,9 +12,8 @@ dist
 dist-ssr
 *.local
 
-# Clerk key (handle authentication)
+# Environment variables
 .env
-.env.local
 
 # Editor directories and files
 .vscode/*

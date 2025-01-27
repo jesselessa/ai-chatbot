@@ -1,6 +1,6 @@
 .menu {
+  width: 20%;
   height: 100%;
-  flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -66,33 +66,28 @@ hr {
 }
 
 .upgrade {
-  display: flex;
-  align-items: center;
-  gap: 15px;
   margin-top: auto;
 }
 
-.upgrade img {
-  width: 24px;
-  height: 24px;
-}
-
-.upgrade .texts {
-  display: flex;
-  flex-direction: column;
-}
-
-.upgrade .texts span:first-child {
+.upgrade .text {
   font-size: 14px;
   font-weight: 600;
+  margin-bottom: 3px;
 }
 
-.upgrade .texts span:last-child {
-  color: #888;
+.upgrade span {
+  margin-left: 5px;
+}
+
+.upgrade img {
+  width: 16px;
+  height: 16px;
 }
 
 .upgrade a {
+  display: block;
   font-size: 13px;
+  color: #888;
   border-radius: 0;
   padding: 0;
 }

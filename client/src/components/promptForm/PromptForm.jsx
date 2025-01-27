@@ -15,7 +15,7 @@ const PromptForm = ({
   // Submit form with "Enter" key
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
+      e.preventDefault(); // Prevents create a new line
       onSubmit(formRef.current); // Pass form reference with actual value
     }
   };
@@ -31,6 +31,7 @@ const PromptForm = ({
       ref={formRef} // Link reference
     >
       {includeFileInput && <Upload setImg={setImg} />}
+
       <textarea
         type="text"
         id="text"

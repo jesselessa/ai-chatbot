@@ -32,5 +32,5 @@ const chatSchema = new mongoose.Schema(
   { timestamps: true } // createdAt and updatedAt
 );
 
-// Check if db exists : if it does, we use it, otherwise, we create a new one
+// Check if db exists : if it does, use it, otherwise, create a new one
 export default mongoose.models.chat || mongoose.model("chat", chatSchema);
