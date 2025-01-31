@@ -27,12 +27,17 @@ const Dashboard = () => {
           text,
         }),
       });
-      if (!res.ok) throw new Error(`Failed to create chat: ${res.statusText}`);
+
+      if (!res.ok)
+        throw new Error(
+          `Failed to create chat: ${res.status} ${res.statusText}`
+        );
+
       const data = await res.json();
       return data;
     } catch (err) {
       console.error("Error in createChat:", err.message);
-      throw err;
+      throw err; // Rethrow error for further handling
     }
   };
 

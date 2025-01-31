@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, Fragment } from "react";
 import "./chatPage.css";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { IKImage } from "imagekitio-react";
 import Markdown from "react-markdown";
@@ -11,39 +11,53 @@ import PromptForm from "../../components/promptForm/PromptForm.jsx";
 import Loader from "../../components/loader/Loader.jsx";
 
 const ChatPage = () => {
-  const [initialResponse, setInitialResponse] = useState(false);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [img, setImg] = useState({
     isLoading: false,
-    error: "",
-    dbData: {}, // Image data uploaded with ImageKit
+    error: "", // Error message when uploading image
+    dbData: {}, // Image data uploaded with ImageKit (IK)
     aiData: {}, // Image data provided within Gemini API request
   });
   const [imgUrl, setImgUrl] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [aiError, setAiError] = useState({ error: false, message: "" });
 
   const chatEndRef = useRef(null);
   const { chatId } = useParams();
+  const location = useLocation();
   const queryClient = useQueryClient();
 
-  // Fetch chat data
+  // Fetch chat data from API
   const fetchChatData = async (chatId) => {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/chats/${chatId}`, {
-      credentials: "include",
-    });
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/chats/${chatId}`,
+        {
+          credentials: "include",
+        }
+      );
 
-    if (!res.ok) {
-      if (res.status === 404) {
-        console.error("No chat found");
-        return [];
+      if (!res.ok) {
+        if (res.status === 404) {
+          console.error("No chat found");
+          return [];
+        }
+
+        throw new Error(
+          `Failed to fetch chat: ${res.status} ${res.statusText}`
+        );
       }
-      throw new Error(`Failed to fetch user chats: ${res.statusText}`);
-    }
 
-    const data = await res.json();
-    return data;
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      console.error("Error in fetchChatData:", err.message);
+      throw err; // Rethrow error for further handling
+    }
   };
 
+  // Handle data with React Query
   const {
     isPending,
     error,
@@ -53,32 +67,87 @@ const ChatPage = () => {
     queryFn: () => fetchChatData(chatId),
   });
 
-  // Generate response for initial message
-  useEffect(() => {
-    if (
-      !initialResponse &&
-      chatData?.history?.length === 1 &&
-      chatData?.history[0]?.role === "user"
-    ) {
-      setInitialResponse(true); // Prevent duplications
-      generateResponse(chatData?.history[0]?.parts[0]?.text);
+  // Fetch AI response
+  const fetchAiResponse = async (prompt) => {
+    try {
+      // Request content to be sent from text-and-image input
+      const content = [
+        prompt,
+        ...(Object.entries(img?.aiData)?.length ? [img.aiData] : []),
+      ];
+
+      const result = await chat.sendMessageStream(content);
+
+      // Build answer gradually
+      let accumulatedText = "";
+      for await (const chunk of result.stream) {
+        accumulatedText += chunk.text();
+        setAnswer(accumulatedText);
+      }
+      return accumulatedText;
+    } catch (err) {
+      console.error("Error generating response:", err);
+      throw new Error(
+        err.message.includes("SAFETY")
+          ? "The response was blocked due to safety concerns. Please, rephrase your question or try to upload a different image."
+          : "An error occurred. Please try again later."
+      );
     }
-  }, [chatData?.history, initialResponse]);
+  };
+
+  // Save chat to database
+  const saveChatToDb = (prompt, answer) => {
+    updateMutation.mutate({
+      question: prompt,
+      answer,
+      ...(imgUrl && { img: imgUrl }),
+    });
+  };
+
+  // Generate AI response
+  const generateAiResponse = async (prompt) => {
+    try {
+      const responseText = await fetchAiResponse(prompt);
+      saveChatToDb(prompt, responseText);
+    } catch (err) {
+      // Display error message temporarly
+      setAiError({ error: true, message: err.message });
+      setTimeout(() => setAiError({ error: false, message: "" }), 5000);
+    }
+  };
+
+  // Generate AI response for initial message
+  useEffect(() => {
+    const firstMessage = chatData?.history[0];
+    if (chatData?.history?.length === 1 && firstMessage?.role === "user")
+      generateAiResponse(firstMessage.parts[0]?.text);
+  }, [chatData?.history]);
 
   // Scroll to the latest message
   useEffect(() => {
     chatEndRef.current.scrollIntoView({ behavior: "smooth" });
-  }, [chatData?.history, img.dbData]);
+  }, [chatData?.history?.length, img.dbData?.url, img.error, aiError.message]); // Include image URL and error messages because not part of Gemini chat history
 
-  // Update image URL if available
+  // Update image URL when available
   useEffect(() => {
     if (img.dbData?.url) setImgUrl(img.dbData.url);
-  }, [img.dbData]);
+  }, [img.dbData?.url]);
+
+  // Reset newly added image when changing page
+  useEffect(() => {
+    if (img?.dbData?.url)
+      setImg({
+        isLoading: false,
+        error: "",
+        dbData: {},
+        aiData: {},
+      });
+  }, [location]);
 
   // Update chat data
   const updateChat = async ({ question, answer, img }) => {
     const body = {
-      ...(question?.length && { question }),
+      question,
       answer,
       ...(imgUrl && { img: imgUrl }),
     };
@@ -91,10 +160,12 @@ const ChatPage = () => {
     });
 
     if (!res.ok) throw new Error(`Failed to update chat: ${res.statusText}`);
+
     const data = await res.json();
     return data;
   };
 
+  // Mutation to update chat using React Query
   const updateMutation = useMutation({
     mutationFn: (data) => updateChat(data),
     onSuccess: () =>
@@ -104,72 +175,59 @@ const ChatPage = () => {
     },
   });
 
-  // Create and format a chat history with Gemini
+  // Format chat history for Gemini
   const formattedHistory =
     chatData?.history?.map(({ role, parts }) => ({
       role,
       parts: parts.map(({ text }) => ({ text })),
     })) || [];
 
+  // Initialize chat with previous messages
   const chat = model.startChat({
     history: formattedHistory,
   });
 
-  // Generate AI response
-  const generateResponse = async (prompt) => {
-    try {
-      // Prepare request content to be sent to API from text-and-image input
-      const content = [
-        prompt,
-        ...(Object.entries(img?.aiData)?.length ? [img.aiData] : []),
-      ];
-
-      const result = await chat.sendMessageStream(content);
-
-      // Build answer progressively
-      let accumulatedText = "";
-      for await (const chunk of result.stream) {
-        accumulatedText += chunk.text();
-        setAnswer(accumulatedText);
-      }
-
-      updateMutation.mutate({
-        ...(question && { question: prompt }),
-        answer: accumulatedText,
-        ...(imgUrl && { img: imgUrl }),
-      });
-    } catch (err) {
-      console.error("Error generating response:", err);
-      setAnswer(
-        err.message.includes("SAFETY")
-          ? "The response was blocked due to safety concerns. Please rephrase your question or try a different image."
-          : "An error occurred. Please, try again later."
-      );
-    }
-  };
-
+  // Handle form submission
   const handleSubmit = async (form) => {
     const text = form.text.value.trim();
     if (!text) return;
+
     setQuestion(text);
+    setIsGenerating(true);
 
     try {
-      await generateResponse(text);
-    } catch (err) {
-      console.error("Error handling submission:", err.message);
-      setAnswer(
-        "An error occurred during submission. Please, try again later."
-      );
-    } finally {
-      // Reset question and image data
-      setQuestion("");
-      setAnswer("");
+      await generateAiResponse(text);
+
+      // Reset image state immediately on success
       setImg({
         isLoading: false,
         error: "",
         dbData: {},
         aiData: {},
       });
+    } catch (err) {
+      console.error("Error handling submission:", err.message);
+      setAiError({
+        error: true,
+        message: "An error occurred during submission. Please try again later.",
+      });
+
+      // Reset AI error and image states after 5 seconds
+      setTimeout(() => {
+        setAiError({
+          error: false,
+          message: "",
+        });
+        setImg({
+          isLoading: false,
+          error: "", // IK error when uploading image (cf. Upload.jsx)
+          dbData: {},
+          aiData: {},
+        });
+      }, 5000);
+    } finally {
+      setQuestion("");
+      setIsGenerating(false);
     }
   };
 
@@ -179,7 +237,7 @@ const ChatPage = () => {
         {isPending ? (
           <Loader width="40px" height="40px" border="4px solid transparent" />
         ) : error ? (
-          <p>Something went wrong! Please, try again later.</p>
+          <p>Something went wrong! Please try again later.</p>
         ) : (
           <>
             {/* Display chat */}
@@ -214,12 +272,17 @@ const ChatPage = () => {
           </>
         )}
 
-        {/* Add a new image */}
+        {/* Handle loading image states */}
         {img?.isLoading && (
-          <Loader width="40px" height="40px" border="4px solid transparent" />
+          <Loader
+            className="img-loader"
+            width="40px"
+            height="40px"
+            border="4px solid transparent"
+          />
         )}
 
-        {!img?.isLoading && img?.dbData?.url && (
+        {!img?.isLoading && img?.dbData?.url?.trim() && (
           <IKImage
             urlEndpoint={import.meta.env.VITE_IMAGE_KIT_ENDPOINT}
             src={img.dbData.url}
@@ -232,6 +295,16 @@ const ChatPage = () => {
           />
         )}
 
+        {/* Display IK error message when loading image */}
+        {!img?.isLoading && img.error?.trim() && (
+          <div className="message">{img.error}</div>
+        )}
+
+        {/* Display AI error message when generating a response*/}
+        {aiError && aiError.message?.trim() && (
+          <div className="message">{aiError.message}</div>
+        )}
+
         {/* Auto-scroll anchor */}
         <div ref={chatEndRef} />
       </div>
@@ -240,6 +313,7 @@ const ChatPage = () => {
         question={question}
         setQuestion={setQuestion}
         setImg={setImg}
+        isGenerating={isGenerating}
         onSubmit={handleSubmit}
       />
     </div>

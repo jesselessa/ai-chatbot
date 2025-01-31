@@ -9,13 +9,14 @@ const PromptForm = ({
   setQuestion,
   setImg,
   onSubmit,
+  isGenerating,
 }) => {
-  const formRef = useRef(null); // Create a reference for form
+  const formRef = useRef(null);
 
   // Submit form with "Enter" key
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); // Prevents create a new line
+      e.preventDefault(); // Prevent creating a new line
       onSubmit(formRef.current); // Pass form reference with actual value
     }
   };
@@ -24,13 +25,14 @@ const PromptForm = ({
     <form
       className="prompt-form"
       name="prompt-form"
+      style={{ backgroundColor: isGenerating ? "#1a1824" : "" }}
       onSubmit={(e) => {
         e.preventDefault();
         onSubmit(formRef.current);
       }}
-      ref={formRef} // Link reference
+      ref={formRef}
     >
-      {includeFileInput && <Upload setImg={setImg} />}
+      {includeFileInput && !isGenerating && <Upload setImg={setImg} />}
 
       <textarea
         type="text"
@@ -38,14 +40,23 @@ const PromptForm = ({
         name="text"
         placeholder="Ask me anything..."
         autoComplete="off"
-        autoFocus // Text cursor blinking on loading page
-        value={question} // State linked with input
-        onChange={(e) => setQuestion(e.target.value)} // Real-time update
+        autoFocus
+        value={question}
+        onChange={(e) => setQuestion(e.target.value)}
         onKeyDown={handleKeyDown}
+        disabled={isGenerating}
       ></textarea>
 
-      <button type="submit" className={`send-btn ${!question ? "hidden" : ""}`}>
-        <img src="/arrow.png" alt="arrow" />
+      <button
+        type="submit"
+        className={`send-btn ${!question ? "hidden" : ""}`}
+        disabled={isGenerating}
+        style={{ transform: isGenerating && "translateY(0)" }}
+      >
+        <img
+          src={isGenerating ? "/square.png" : "/arrow.png"}
+          alt={isGenerating ? "generating" : "send"}
+        />
       </button>
     </form>
   );

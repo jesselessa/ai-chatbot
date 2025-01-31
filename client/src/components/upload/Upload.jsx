@@ -37,28 +37,23 @@ const Upload = ({ setImg }) => {
   };
 
   const onSuccess = (res) => {
-    console.log("Success", res); // Uploaded image data
+    // res = uploaded image data
     setImg((prev) => ({
       ...prev,
       isLoading: false,
-      dbData: res,
+      dbData: res, // res.url = image URL
     }));
   };
 
-  const onUploadProgress = (progress) => {
-    console.log("Progress", progress);
-  };
-
   const onUploadStart = (evt) => {
-    const file = evt.target.files[0]; // Upload only 1 file
-    console.log("File:", file);
+    const file = evt.target.files[0];
 
     const reader = new FileReader();
     reader.onloadend = () => {
       setImg((prev) => ({
         ...prev,
         isLoading: true,
-        //! 'aiData' represents an object that represents the image file in a format that the Gemini API can understand and use for multimodal generation (cf. doc : 'Generate text from text-and-image input')
+        //! 'aiData' is an object that represents the image file in a format that the Gemini API can understand and use for multimodal generation
         aiData: {
           inlineData: {
             data: reader.result.split(",")[1], // Extract base64 data from file
@@ -84,7 +79,6 @@ const Upload = ({ setImg }) => {
         useUniqueFileName={true}
         onError={onError}
         onSuccess={onSuccess}
-        onUploadProgress={onUploadProgress}
         onUploadStart={onUploadStart}
         style={{ display: "none" }}
       />

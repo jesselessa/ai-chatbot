@@ -14,11 +14,13 @@ const Menu = () => {
       });
       if (!res.ok) {
         if (res.status === 404) {
-          console.error("No chat found for this user");
+          console.error(`${res.status} - No chat found for this user`);
           return [];
         }
 
-        throw new Error(`Failed to fetch user chats: ${res.statusText}`);
+        throw new Error(
+          `Failed to fetch user chats: ${res.status} ${res.statusText}`
+        );
       }
 
       const data = await res.json();
@@ -42,8 +44,16 @@ const Menu = () => {
     <div className="menu">
       <span className="title">DASHBOARD</span>
       <Link to="/dashboard">Create a new chat</Link>
-      <Link to="/">Explore Ask Jessbot</Link>
-      <Link to="/">Contact</Link>
+
+      {/* Complete link later and (or) change title */}
+      <Link to="#">Explore Ask Jessbot</Link>
+      <Link
+        to="https://github.com/jesselessa"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Contact
+      </Link>
 
       <hr />
 
@@ -55,18 +65,15 @@ const Menu = () => {
         ) : error ? (
           <p>Something went wrong&nbsp;! Please, try again later.</p>
         ) : Array.isArray(userChats) && userChats.length > 0 ? (
-          <>
-          {/* Display chats titles */}
-            {userChats.map((chat) => (
-              <Link to={`/dashboard/chats/${chat._id}`} key={chat._id}>
-                <p className="chat-title">
-                  {chat.title?.length > 20
-                    ? `${chat.title.substring(0, 20)}...`
-                    : chat.title}
-                </p>
-              </Link>
-            ))}
-          </>
+          userChats.map((chat) => (
+            <Link to={`/dashboard/chats/${chat._id}`} key={chat._id}>
+              <p className="chat-title">
+                {chat.title?.length > 20
+                  ? `${chat.title.substring(0, 20)}...`
+                  : chat.title}
+              </p>
+            </Link>
+          ))
         ) : (
           <p>No chat available.</p>
         )}

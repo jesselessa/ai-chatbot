@@ -16,8 +16,8 @@ const Home = () => {
           Your friendly mini assistant for big ideas and quick&nbsp;answers
         </h2>
         <h3>
-          Ask Jessbot is a compact and intuitive chatbot, using Google Gemini
-          AI.
+          Ask Jessbot is a compact and intuitive chatbot, using Gemini,
+          Google&nbsp;AI.
           <br />
           Smart, fast, and always ready, it makes your life simpler, one chat at
           a time&nbsp;!
