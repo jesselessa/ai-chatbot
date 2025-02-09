@@ -19,7 +19,7 @@ const ChatPage = () => {
     dbData: {}, // Image data uploaded with ImageKit (IK)
     aiData: {}, // Image data provided within Gemini API request
   });
-  const [imgUrl, setImgUrl] = useState("");
+  const [imgUrl, setImgUrl] = useState(""); // Image URL in a distinct state
   const [isGenerating, setIsGenerating] = useState(false);
   const [aiError, setAiError] = useState({ error: false, message: "" });
 
@@ -39,21 +39,21 @@ const ChatPage = () => {
       );
 
       if (!res.ok) {
+        const errorMsg = await res.text();
+
         if (res.status === 404) {
           console.error("No chat found");
-          return [];
+          return { history: [] }; // Return chat data as an empty array
         }
 
-        throw new Error(
-          `Failed to fetch chat: ${res.status} ${res.statusText}`
-        );
+        throw new Error(`Failed to fetch chat: ${res.status} - ${errorMsg}`);
       }
 
       const data = await res.json();
       return data;
     } catch (err) {
       console.error("Error in fetchChatData:", err.message);
-      throw err; // Rethrow error for further handling
+      throw err; // Relaunch error for React Query
     }
   };
 
@@ -61,10 +61,44 @@ const ChatPage = () => {
   const {
     isPending,
     error,
-    data: chatData,
+    data: chatData = { history: [] }, // Default value
   } = useQuery({
     queryKey: ["chat", chatId],
     queryFn: () => fetchChatData(chatId),
+  });
+
+  // Update chat data
+  const updateChat = async ({ question, answer, img }) => {
+    const body = {
+      ...(question?.length && { question }),
+      answer,
+      ...(imgUrl && { img: imgUrl }),
+    };
+
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/chats/${chatId}`, {
+      method: "PUT",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const errorMsg = await res.text();
+      throw new Error(`Failed to update chat: ${res.statusText} - ${errorMsg}`);
+    }
+
+    const data = await res.json();
+    return data;
+  };
+
+  // Mutation to update chat using React Query
+  const updateMutation = useMutation({
+    mutationFn: (data) => updateChat(data),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["chat", chatId] }),
+    onError: (err) => {
+      console.error("Error updating chat:", err.message);
+    },
   });
 
   // Fetch AI response
@@ -75,7 +109,6 @@ const ChatPage = () => {
         prompt,
         ...(Object.entries(img?.aiData)?.length ? [img.aiData] : []),
       ];
-
       const result = await chat.sendMessageStream(content);
 
       // Build answer gradually
@@ -84,6 +117,7 @@ const ChatPage = () => {
         accumulatedText += chunk.text();
         setAnswer(accumulatedText);
       }
+
       return accumulatedText;
     } catch (err) {
       console.error("Error generating response:", err);
@@ -95,20 +129,20 @@ const ChatPage = () => {
     }
   };
 
-  // Save chat to database
-  const saveChatToDb = (prompt, answer) => {
-    updateMutation.mutate({
-      question: prompt,
-      answer,
-      ...(imgUrl && { img: imgUrl }),
-    });
-  };
-
   // Generate AI response
   const generateAiResponse = async (prompt) => {
     try {
-      const responseText = await fetchAiResponse(prompt);
-      saveChatToDb(prompt, responseText);
+      const aiResponse = await fetchAiResponse(prompt);
+      if (!aiResponse) throw new Error("No response received from AI");
+
+      setAnswer(aiResponse);
+
+      // Save chat to database
+      updateMutation.mutate({
+        ...(question && { question: prompt }),
+        answer: aiResponse,
+        ...(imgUrl && { img: imgUrl }),
+      });
     } catch (err) {
       // Display error message temporarly
       setAiError({ error: true, message: err.message });
@@ -126,7 +160,7 @@ const ChatPage = () => {
   // Scroll to the latest message
   useEffect(() => {
     chatEndRef.current.scrollIntoView({ behavior: "smooth" });
-  }, [chatData?.history?.length, img.dbData?.url, img.error, aiError.message]); // Include image URL and error messages because not part of Gemini chat history
+  }, [chatData?.history?.length, img.dbData?.url, img.error, aiError.message]);
 
   // Update image URL when available
   useEffect(() => {
@@ -143,37 +177,6 @@ const ChatPage = () => {
         aiData: {},
       });
   }, [location]);
-
-  // Update chat data
-  const updateChat = async ({ question, answer, img }) => {
-    const body = {
-      question,
-      answer,
-      ...(imgUrl && { img: imgUrl }),
-    };
-
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/chats/${chatId}`, {
-      method: "PUT",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) throw new Error(`Failed to update chat: ${res.statusText}`);
-
-    const data = await res.json();
-    return data;
-  };
-
-  // Mutation to update chat using React Query
-  const updateMutation = useMutation({
-    mutationFn: (data) => updateChat(data),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["chat", chatId] }),
-    onError: (err) => {
-      console.error("Error updating chat:", err.message);
-    },
-  });
 
   // Format chat history for Gemini
   const formattedHistory =
@@ -220,13 +223,14 @@ const ChatPage = () => {
         });
         setImg({
           isLoading: false,
-          error: "", // IK error when uploading image (cf. Upload.jsx)
+          error: "",
           dbData: {},
           aiData: {},
         });
       }, 5000);
     } finally {
       setQuestion("");
+      setAnswer("");
       setIsGenerating(false);
     }
   };

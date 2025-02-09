@@ -34,7 +34,7 @@ export const addNewChat = async (req, res, next) => {
     });
 
     const savedChat = await newChat.save(); // Send chat to database
-    const chatTitle = text?.length > 40 ? `${text.substring(0, 40)}...` : text; // Generate chat title
+    const chatTitle = text?.length > 40 ? `${text.substring(0, 40)}...` : text; // Define chat title (limited to 1st 40 characters)
 
     // Check if user already has a chat collection
     const userChats = await UserChats.findOne({ userId });
@@ -61,7 +61,8 @@ export const addNewChat = async (req, res, next) => {
               title: chatTitle,
             },
           },
-        }
+        },
+        { upsert: true }
       );
     }
 
@@ -83,15 +84,10 @@ export const updateChat = async (req, res, next) => {
   try {
     // Construct new chat messages
     const newItems = [
-      {
-        role: "user",
-        parts: [{ text: question }],
-        ...(img && { img }), // Add image only if it exists
-      },
-      {
-        role: "model",
-        parts: [{ text: answer }],
-      },
+      ...(question
+        ? [{ role: "user", parts: [{ text: question }], ...(img && { img }) }]
+        : []),
+      { role: "model", parts: [{ text: answer }] },
     ];
 
     // Update chat document by appending new messages

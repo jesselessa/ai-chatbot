@@ -16,36 +16,30 @@ const Dashboard = () => {
 
   // Create a new chat
   const createChat = async (text) => {
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/chats`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          text,
-        }),
-      });
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/chats`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text,
+      }),
+    });
 
-      if (!res.ok)
-        throw new Error(
-          `Failed to create chat: ${res.status} ${res.statusText}`
-        );
-
-      const data = await res.json();
-      return data;
-    } catch (err) {
-      console.error("Error in createChat:", err.message);
-      throw err; // Rethrow error for further handling
+    if (!res.ok) {
+      const errorMsg = await res.text(); // Get error message
+      throw new Error(`Failed to create chat: ${res.status} - ${errorMsg}`);
     }
+
+    const data = await res.json();
+    return data;
   };
 
   const mutation = useMutation({
-    mutationFn: (text) => createChat(text),
+    mutationFn: createChat,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["userChats"] });
-      setText(""); // Clear form after submission
       navigate(`/dashboard/chats/${data.chatId}`); // Redirect to ChatPage
     },
     onError: (err) => {
@@ -59,8 +53,9 @@ const Dashboard = () => {
     const prompt = form.text.value.trim();
     if (!prompt) return;
 
-    setText(prompt);
-    mutation.mutate(prompt);
+    mutation.mutate(prompt, {
+      onSettled: () => setText(""), //! 'onSettled' = wether success or not
+    });
   };
 
   return (
