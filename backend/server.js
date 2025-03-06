@@ -71,5 +71,5 @@ app.use((err, req, res, next) => {
 //* Start server and connect to database
 app.listen(port, async () => {
   await connectDB();
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server running on port ${port}`);
 });
