@@ -1,0 +1,53 @@
+.confirm-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 500;
+}
+
+.confirm-dialog {
+  width: 300px;
+  background-color: white;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+}
+
+.confirm-dialog p {
+  font-size: 18px;
+  color: black;
+  margin-bottom: 20px;
+}
+
+.confirm-dialog-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.confirm-dialog-buttons button {
+  width: 80px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.confirm-dialog-buttons button:first-child {
+  background-color: #e5635e;
+  color: white;
+}
+
+.confirm-dialog-buttons button:last-child {
+  background-color: #ccc;
+  /* color: #ccc; */
+}

@@ -84,8 +84,9 @@ const ChatPage = () => {
       }
       const data = await res.json();
 
-      // Invalidate query to update chat data
+      // Invalidate query to update databases
       queryClient.invalidateQueries({ queryKey: ["chat", chatId] });
+      queryClient.invalidateQueries({ queryKey: ["userChats"] }); // Update Menu
     } catch (err) {
       console.error(err);
     }

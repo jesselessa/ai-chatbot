@@ -1,6 +1,5 @@
 import Chat from "../models/chat.js";
 import UserChats from "../models/userChats.js";
-import util from "util";
 import { generateResponse } from "../config/gemini.js";
 
 export const getChat = async (req, res, next) => {
@@ -10,10 +9,7 @@ export const getChat = async (req, res, next) => {
   try {
     // Fetch chat based on its ID and user ID
     const chat = await Chat.findOne({ _id: chatId, userId });
-    if (!chat)
-      return res
-        .status(404)
-        .json({ message: "Chat not found or unauthorized" });
+    if (!chat) return res.status(404).json({ message: "Chat not found" });
 
     res.status(200).json(chat);
   } catch (err) {
@@ -90,9 +86,7 @@ export const updateChat = async (req, res, next) => {
     // Retrieve existing chat to get complete history
     const chat = await Chat.findOne({ _id: chatId, userId });
     if (!chat) {
-      return res
-        .status(404)
-        .json({ message: "Chat not found or unauthorized" });
+      return res.status(404).json({ message: "Chat not found" });
     }
 
     // Initialize MongoDB chat history
@@ -135,10 +129,8 @@ export const updateChat = async (req, res, next) => {
 
     // Check if update is effective
     if (updatedChat.matchedCount === 0)
-      // No document matches search criteria
-      return res
-        .status(404)
-        .json({ message: "Chat not found or unauthorized" });
+      // If, no document matches search criteria
+      return res.status(404).json({ message: "Chat not found" });
 
     // Define chat title based on input type
     const chatTitle = img

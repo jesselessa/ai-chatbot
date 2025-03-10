@@ -1,16 +1,24 @@
+import { useState } from "react";
 import "./menu.css";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-// Component
+// Components
 import Loader from "../loader/Loader.jsx";
+import ConfirmDialog from "../confirmDialog/ConfirmDialog.jsx";
 
 // Images
 import bin from "../../../src/assets/delete.png";
 import gemini from "../../../src/assets/gemini.png";
 
 const Menu = () => {
+  const [dialog, setDialog] = useState({
+    isOpen: false,
+    chatId: null,
+  });
+
   const { chatId } = useParams();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   // Fetch user chats
@@ -20,13 +28,14 @@ const Menu = () => {
         credentials: "include",
       });
       if (!res.ok) {
+        const errorMsg = await res.text();
+
         if (res.status === 404) {
           console.error(`${res.status} - No chat found for this user`);
           return [];
         }
-
         throw new Error(
-          `Failed to fetch user chats: ${res.status} ${res.statusText}`
+          `Failed to fetch user chats: ${res.status} - ${errorMsg}`
         );
       }
 
@@ -64,12 +73,28 @@ const Menu = () => {
       }
       const data = await res.json();
 
-      // Invalidate query to update chat data
+      // Invalidate query to update databases
       queryClient.invalidateQueries({ queryKey: ["chat", chatId] });
+      queryClient.invalidateQueries({ queryKey: ["userChats"] });
     } catch (err) {
       console.error("Error in handleDeleteChat :", err.message);
       throw err;
     }
+  };
+
+  const openDeletionDialogBox = (e, chatId) => {
+    e.preventDefault(); // Prevent <Link> default behaviour because <img> (deletion icon) is inside the latter
+    setDialog({ isOpen: true, chatId });
+  };
+
+  const confirmDeletion = () => {
+    handleDeleteChat(dialog.chatId);
+    setDialog({ isOpen: false, chatId: null });
+    navigate(`/dashboard`);
+  };
+
+  const cancelDeletion = () => {
+    setDialog({ isOpen: false, chatId: null });
   };
 
   return (
@@ -104,7 +129,7 @@ const Menu = () => {
                 className="delete"
                 src={bin}
                 alt="delete"
-                onClick={() => handleDeleteChat(chat._id)}
+                onClick={(e) => openDeletionDialogBox(e, chat._id)}
               />
 
               {/* Chat title */}
@@ -119,6 +144,14 @@ const Menu = () => {
           <p>No chat available.</p>
         )}
       </div>
+
+      {/* Confirm chat deletion */}
+      <ConfirmDialog
+        isOpen={dialog.isOpen}
+        message="Delete Chat ?"
+        onConfirm={confirmDeletion}
+        onCancel={cancelDeletion}
+      />
 
       <hr />
 
