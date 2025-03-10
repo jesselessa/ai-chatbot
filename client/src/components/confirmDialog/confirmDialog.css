@@ -22,7 +22,7 @@
 }
 
 .confirm-dialog p {
-  font-size: 18px;
+  font-size: 17px;
   color: black;
   margin-bottom: 20px;
 }
@@ -38,7 +38,7 @@
   font-size: 16px;
   border: none;
   border-radius: 4px;
-  padding: 10px 15px;
+  padding: 8px 15px;
   cursor: pointer;
 }
 

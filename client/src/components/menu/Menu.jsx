@@ -12,7 +12,7 @@ import bin from "../../../src/assets/delete.png";
 import gemini from "../../../src/assets/gemini.png";
 
 const Menu = () => {
-  const [dialog, setDialog] = useState({
+  const [dialogBox, setDialogBox] = useState({
     isOpen: false,
     chatId: null,
   });
@@ -84,17 +84,17 @@ const Menu = () => {
 
   const openDeletionDialogBox = (e, chatId) => {
     e.preventDefault(); // Prevent <Link> default behaviour because <img> (deletion icon) is inside the latter
-    setDialog({ isOpen: true, chatId });
+    setDialogBox({ isOpen: true, chatId });
   };
 
   const confirmDeletion = () => {
-    handleDeleteChat(dialog.chatId);
-    setDialog({ isOpen: false, chatId: null });
+    handleDeleteChat(dialogBox.chatId);
+    setDialogBox({ isOpen: false, chatId: null });
     navigate(`/dashboard`);
   };
 
   const cancelDeletion = () => {
-    setDialog({ isOpen: false, chatId: null });
+    setDialogBox({ isOpen: false, chatId: null });
   };
 
   return (
@@ -147,7 +147,7 @@ const Menu = () => {
 
       {/* Confirm chat deletion */}
       <ConfirmDialog
-        isOpen={dialog.isOpen}
+        isOpen={dialogBox.isOpen}
         message="Delete Chat ?"
         onConfirm={confirmDeletion}
         onCancel={cancelDeletion}
