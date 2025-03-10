@@ -32,7 +32,6 @@ const Upload = ({ setImg }) => {
     setImg((prev) => ({
       ...prev,
       isLoading: false,
-      error: err.message,
     }));
   };
 

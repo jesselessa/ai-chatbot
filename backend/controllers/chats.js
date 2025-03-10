@@ -1,5 +1,7 @@
 import Chat from "../models/chat.js";
 import UserChats from "../models/userChats.js";
+import util from "util";
+import { generateResponse } from "../config/gemini.js";
 
 export const getChat = async (req, res, next) => {
   const { userId } = req.auth; // Get ID from Clerk auth info
@@ -8,7 +10,10 @@ export const getChat = async (req, res, next) => {
   try {
     // Fetch chat based on its ID and user ID
     const chat = await Chat.findOne({ _id: chatId, userId });
-    if (!chat) return res.status(404).json({ message: "No chat found" });
+    if (!chat)
+      return res
+        .status(404)
+        .json({ message: "Chat not found or unauthorized" });
 
     res.status(200).json(chat);
   } catch (err) {
@@ -79,30 +84,58 @@ export const addNewChat = async (req, res, next) => {
 export const updateChat = async (req, res, next) => {
   const { userId } = req.auth;
   const { chatId } = req.params;
-  const { question, answer, img } = req.body;
+  const { question, img } = req.body; // img = image URL
 
   try {
-    // Construct new chat messages
-    const newItems = [
-      ...(question
-        ? [{ role: "user", parts: [{ text: question }], ...(img && { img }) }]
-        : []),
-      { role: "model", parts: [{ text: answer }] },
-    ];
+    // Retrieve existing chat to get complete history
+    const chat = await Chat.findOne({ _id: chatId, userId });
+    if (!chat) {
+      return res
+        .status(404)
+        .json({ message: "Chat not found or unauthorized" });
+    }
 
-    // Update chat document by appending new messages
+    // Initialize MongoDB chat history
+    let dbChatHistory = chat.history;
+
+    // Initialize Gemini chat history (without MongoDB "_id" and "img" keys to fit AI model)
+    let aiChatHistory = dbChatHistory
+      .filter((message) => message?.role && message?.parts)
+      .map(({ role, parts }) => ({
+        role,
+        parts: parts.map(({ text }) => ({ text })),
+      }));
+
+    // Add user question to MongoDB et Gemini chat histories
+    if (question) {
+      dbChatHistory.push({
+        role: "user",
+        parts: [{ text: question }],
+        ...(img && { img }), // Optional image URL
+      });
+
+      aiChatHistory.push({
+        role: "user",
+        parts: [{ text: question }],
+      });
+    }
+
+    // Generate AI response
+    const aiResponse = await generateResponse(aiChatHistory, img);
+
+    // Add AI response to chat histories
+    dbChatHistory.push({ role: "model", parts: [{ text: aiResponse }] });
+    aiChatHistory.push({ role: "model", parts: [{ text: aiResponse }] });
+
+    // Update chat data in database
     const updatedChat = await Chat.updateOne(
       { _id: chatId, userId },
-      {
-        $push: {
-          history: {
-            $each: newItems,
-          },
-        },
-      }
+      { $set: { history: dbChatHistory } }
     );
 
+    // Check if update is effective
     if (updatedChat.matchedCount === 0)
+      // No document matches search criteria
       return res
         .status(404)
         .json({ message: "Chat not found or unauthorized" });
