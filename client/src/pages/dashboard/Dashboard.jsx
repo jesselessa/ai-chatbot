@@ -7,6 +7,11 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 // Component
 import PromptForm from "../../components/promptForm/PromptForm.jsx";
 
+// Images
+import chat from "../../../src/assets/chat.png";
+import image from "../../../src/assets/image.png";
+import code from "../../../src/assets/code.png";
+
 const Dashboard = () => {
   const [text, setText] = useState("");
 
@@ -71,17 +76,17 @@ const Dashboard = () => {
 
         <div className="options">
           <div className="option">
-            <img src="/chat.png" alt="chat" />
+            <img src={chat} alt="chat" />
             <span>Create a new chat</span>
           </div>
 
           <div className="option">
-            <img src="/image.png" alt="images" />
-            <span>Analyze images</span>
+            <img src={image} alt="image" />
+            <span>Analyze assets</span>
           </div>
 
           <div className="option">
-            <img src="/code.png" alt="code" />
+            <img src={code} alt="code" />
             <span>Help me with my code</span>
           </div>
         </div>

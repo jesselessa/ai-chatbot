@@ -1,7 +1,12 @@
 import { useRef } from "react";
 import "./promptForm.css";
-import model from "../../lib/gemini.js";
+
+// Component
 import Upload from "../upload/Upload.jsx";
+
+// Images
+import square from "../../../src/assets/square.png";
+import arrow from "../../../src/assets/arrow.png";
 
 const PromptForm = ({
   includeFileInput = true,
@@ -54,7 +59,7 @@ const PromptForm = ({
         style={{ transform: isGenerating && "translateY(0)" }}
       >
         <img
-          src={isGenerating ? "/square.png" : "/arrow.png"}
+          src={isGenerating ? `${square}` : `${arrow}`}
           alt={isGenerating ? "generating" : "send"}
         />
       </button>

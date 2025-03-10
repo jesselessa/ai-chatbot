@@ -85,7 +85,7 @@ const ChatPage = () => {
       const data = await res.json();
 
       // Invalidate query to update chat data
-      queryClient.invalidateQueries({ queryKey: ["chat", chatId] }); //
+      queryClient.invalidateQueries({ queryKey: ["chat", chatId] });
     } catch (err) {
       console.error(err);
     }
@@ -128,7 +128,7 @@ const ChatPage = () => {
         dbData: {},
         aiData: {},
       });
-      setImgUrl(""); 
+      setImgUrl("");
       setIsGenerating(false);
     }
   };

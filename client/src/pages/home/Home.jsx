@@ -3,12 +3,19 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { TypeAnimation } from "react-type-animation";
 
+// Images
+import orbital from "../../../src/assets/orbital.png";
+import bot from "../../../src/assets/bot.png";
+import jane from "../../../src/assets/jane.jpg";
+import john from "../../../src/assets/john.jpeg";
+import logo from "../../../src/assets/logo.png";
+
 const Home = () => {
   const [typingStatus, setTypingStatus] = useState("john");
 
   return (
     <div className="home">
-      <img src="/orbital.png" alt="orbital" className="orbital" />
+      <img src={orbital} alt="orbital" className="orbital" />
       {/* Left */}
       <div className="left">
         <h1>ASK&nbsp;JESSBOT</h1>
@@ -34,17 +41,17 @@ const Home = () => {
           </div>
 
           {/* Animated image*/}
-          <img src="/bot.png" alt="bot" className="bot" />
+          <img src={bot} alt="bot" className="bot" />
 
           {/* Chatbox */}
           <div className="chatbox">
             <img
               src={
                 typingStatus === "john"
-                  ? "/john.jpeg"
+                  ? `${john}`
                   : typingStatus === "jane"
-                  ? "/jane.jpg"
-                  : "/bot.png"
+                  ? `${jane}`
+                  : `${bot}`
               }
               alt={
                 typingStatus === "john"
@@ -89,7 +96,7 @@ const Home = () => {
       </div>
 
       <div className="terms">
-        <img src="/logo.png" alt="logo" />
+        <img src={logo} alt="logo" />
         <div className="links">
           <Link to="/">Terms of Service</Link>
           <span>|</span>

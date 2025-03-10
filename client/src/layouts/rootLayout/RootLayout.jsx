@@ -3,6 +3,9 @@ import { Link, Outlet } from "react-router-dom";
 import { ClerkProvider, SignedIn, UserButton } from "@clerk/clerk-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+// Image
+import bigLogo from "../../../src/assets/logo-big.png";
+
 // Import Clerk publishable key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 if (!PUBLISHABLE_KEY) throw new Error("Missing Publishable Key");
@@ -18,7 +21,7 @@ const RootLayout = () => {
           <header>
             {/* Logo */}
             <Link to="/" className="logo">
-              <img src="/logo.png" alt="logo" />
+              <img src={bigLogo} alt="logo" />
               <span> ASK JESSBOT</span>
             </Link>
             {/* User info */}

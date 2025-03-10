@@ -1,6 +1,9 @@
 import { useRef } from "react";
 import { IKContext, IKUpload } from "imagekitio-react";
 
+// Image
+import attachment from "../../../src/assets/attachment.png";
+
 //* Configure ImageKit for client-side upload
 const urlEndpoint = import.meta.env.VITE_IMAGE_KIT_ENDPOINT;
 const publicKey = import.meta.env.VITE_IMAGE_KIT_PUBLIC_KEY;
@@ -83,11 +86,7 @@ const Upload = ({ setImg }) => {
       />
       {
         <label htmlFor="prompt-form-file">
-          <img
-            className="attachment-btn"
-            src="/attachment.png"
-            alt="attachment"
-          />
+          <img className="attachment-btn" src={attachment} alt="attachment" />
         </label>
       }
     </IKContext>
