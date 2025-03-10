@@ -11,7 +11,7 @@ const chatReferenceSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true } // createdAt and updatedAt
 );
 
 const userChatsSchema = new mongoose.Schema({

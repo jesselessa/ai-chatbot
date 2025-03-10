@@ -12,9 +12,9 @@ export const getUserChats = async (req, res, next) => {
     // Sort chats by 'updatedAt' from newest to oldest
     const sortedChats = userChats.chats.sort(
       (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-    );
+    ); //! If we don't add 'newDate()', comparison between 2 strings instead of 2 Date objects in JS
 
-    res.status(200).json(userChats.chats);
+    res.status(200).json(sortedChats);
   } catch (err) {
     console.error("Error fetching user chats:", err);
     next(err);
