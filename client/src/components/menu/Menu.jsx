@@ -102,8 +102,6 @@ const Menu = () => {
       <span className="title">DASHBOARD</span>
       <Link to="/dashboard">Create a new chat</Link>
 
-      {/* Complete link later and (or) change title */}
-      <Link to="#">Explore Ask Jessbot</Link>
       <Link
         to="https://github.com/jesselessa"
         target="_blank"
