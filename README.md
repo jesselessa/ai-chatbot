@@ -16,7 +16,7 @@ This project is a chatbot application created with React, Node.js, Express.js an
 - [Contributing](#contributing)
 - [Stay Updated](#stay-updated)
 - [Contact](#contact)
-- [Licence](#licence)
+- [License](#license)
 
 ## Demo
 
@@ -40,8 +40,8 @@ You can see a live demo of the project [here](https://).
 
 ## Screenshots
 
-![Screenshot1](./client/public/screenshots/screenshot1.png)
-![Screenshot2](./client/public/screenshots/screenshot2.png)
+![Screenshot1](./client/public/screenshot1.png)
+![Screenshot2](./client/public/screenshot2.png)
 
 ## Main features
 
