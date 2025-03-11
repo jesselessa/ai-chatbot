@@ -8,6 +8,8 @@ import SignInPage from "./pages/signInPage/SignInPage.jsx";
 import SignUpPage from "./pages/signUpPage/SignUpPage.jsx";
 import Dashboard from "./pages/dashboard/Dashboard.jsx";
 import ChatPage from "./pages/chatPage/ChatPage.jsx";
+import TermsOfService from "./pages/termsOfService/TermsOfService.jsx";
+import PrivacyPolicy from "./pages/privacyPolicy/PrivacyPolicy.jsx";
 
 // Router
 const router = createBrowserRouter([
@@ -24,9 +26,11 @@ const router = createBrowserRouter([
           { path: "/dashboard/chats/:chatId", element: <ChatPage /> },
         ],
       },
-      { path: "*", element: <Home /> },
     ],
   },
+  { path: "/terms-of-service", element: <TermsOfService /> },
+  { path: "/privacy-policy", element: <PrivacyPolicy /> },
+  { path: "*", element: <Home /> },
 ]);
 
 const App = () => {

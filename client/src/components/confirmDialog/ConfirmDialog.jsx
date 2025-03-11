@@ -1,5 +1,3 @@
-// ConfirmDialog.jsx
-import React from "react";
 import "./confirmDialog.css";
 
 const ConfirmDialog = ({ isOpen, message, onConfirm, onCancel }) => {
