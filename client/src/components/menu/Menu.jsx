@@ -107,7 +107,6 @@ const Menu = ({ onClose }) => {
         to="https://github.com/jesselessa"
         target="_blank"
         rel="noopener noreferrer"
-        onClick={onClose}
       >
         Contact
       </Link>
@@ -138,8 +137,8 @@ const Menu = ({ onClose }) => {
 
               {/* Chat title */}
               <p className="chat-title">
-                {chat.title?.length > 35
-                  ? `${chat.title.substring(0, 35)}...`
+                {chat.title?.length > 25
+                  ? `${chat.title.substring(0, 25)}...`
                   : chat.title}
               </p>
             </Link>
