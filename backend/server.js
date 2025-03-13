@@ -29,19 +29,19 @@ app.use(clerkMiddleware()); //! ClerkMiddleware checks the request cookies and h
 
 //* Routes
 // ImageKit authentication info
-app.get("/upload", (req, res) => {
+app.get("/api/upload", (req, res) => {
   const result = imagekit.getAuthenticationParameters();
   res.send(result);
 });
 
 // Clerk authentication info
-app.get("/auth-state", (req, res) => {
+app.get("/api/auth-state", (req, res) => {
   return res.json(req.auth);
 });
 
 // Protected "chats" routes
-app.use("/chats", handleAuthErrors, chatsRoute);
-app.use("/user-chats", handleAuthErrors, userChatsRoute);
+app.use("/api/chats", handleAuthErrors, chatsRoute);
+app.use("/api/user-chats", handleAuthErrors, userChatsRoute);
 
 //* Serve static files in production
 if (process.env.NODE_ENV === "production") {
