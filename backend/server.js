@@ -13,7 +13,7 @@ import chatsRoute from "./routes/chats.js";
 import userChatsRoute from "./routes/userChats.js";
 
 const app = express();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
