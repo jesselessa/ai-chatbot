@@ -26,8 +26,9 @@ const DashboardLayout = () => {
     const handleResize = () => {
       const newIsSmallScreen = window.innerWidth <= 800;
       setIsSmallScreen(newIsSmallScreen);
+      setIsBurgerClicked(false); // By default, Menu is closed on small screens
 
-      // Open menu by default on large screens
+      // By default, Menu is open on large screens
       if (!newIsSmallScreen) {
         setIsBurgerClicked(true);
       }
