@@ -11,7 +11,7 @@ import ConfirmDialog from "../confirmDialog/ConfirmDialog.jsx";
 import bin from "../../../src/assets/delete.png";
 import gemini from "../../../src/assets/gemini.png";
 
-const Menu = () => {
+const Menu = ({ onClose }) => {
   const [dialogBox, setDialogBox] = useState({
     isOpen: false,
     chatId: null,
@@ -82,8 +82,7 @@ const Menu = () => {
     }
   };
 
-  const openDeletionDialogBox = (e, chatId) => {
-    e.preventDefault(); // Prevent <Link> default behaviour because <img> (deletion icon) is inside the latter
+  const openDeletionDialogBox = (chatId) => {
     setDialogBox({ isOpen: true, chatId });
   };
 
@@ -100,12 +99,15 @@ const Menu = () => {
   return (
     <div className="menu">
       <span className="title">DASHBOARD</span>
-      <Link to="/dashboard">Create a new chat</Link>
+      <Link to="/dashboard" onClick={onClose}>
+        Create a new chat
+      </Link>
 
       <Link
         to="https://github.com/jesselessa"
         target="_blank"
         rel="noopener noreferrer"
+        onClick={onClose}
       >
         Contact
       </Link>
@@ -121,19 +123,23 @@ const Menu = () => {
           <p>Something went wrong&nbsp;! Please, try again later.</p>
         ) : Array.isArray(userChats) && userChats.length > 0 ? (
           userChats.map((chat) => (
-            <Link to={`/dashboard/chats/${chat._id}`} key={chat._id}>
+            <Link
+              to={`/dashboard/chats/${chat._id}`}
+              key={chat._id}
+              onClick={onClose}
+            >
               {/* Delete icon */}
               <img
                 className="delete"
                 src={bin}
                 alt="delete"
-                onClick={(e) => openDeletionDialogBox(e, chat._id)}
+                onClick={() => openDeletionDialogBox(chat._id)}
               />
 
               {/* Chat title */}
               <p className="chat-title">
-                {chat.title?.length > 20
-                  ? `${chat.title.substring(0, 20)}...`
+                {chat.title?.length > 35
+                  ? `${chat.title.substring(0, 35)}...`
                   : chat.title}
               </p>
             </Link>
@@ -166,7 +172,7 @@ const Menu = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn more about Google AI
+          Learn more about Google&nbsp;AI
         </a>
       </div>
     </div>

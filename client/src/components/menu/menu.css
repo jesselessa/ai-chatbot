@@ -27,7 +27,7 @@ hr {
   margin: 20px 0px;
 }
 
-.title {
+.menu .title {
   font-weight: 600;
   font-size: 13px;
   margin-bottom: 10px;
@@ -84,6 +84,7 @@ hr {
 
 .upgrade {
   margin-top: auto;
+  margin-bottom: 20px;
 }
 
 .upgrade .text {
@@ -111,4 +112,31 @@ hr {
 
 .upgrade a:hover {
   background-color: transparent;
+}
+
+@media screen and (max-width: 1024px) {
+  .menu {
+    width: 25%;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .menu {
+    width: 33%;
+    position: fixed;
+    top: 100px; /* Padding-tops of RootLayout + header + DashboardLayout + .content */
+    left: 0;
+    height: calc(100% - 100px);
+    background-color: #0e0c16;
+    z-index: 10;
+    padding: 20px 10px;
+  }
+}
+
+@media screen and (max-width: 550px) {
+  .menu {
+    width: 70%;
+    top: 90px;
+    height: calc(100% - 90px);
+  }
 }

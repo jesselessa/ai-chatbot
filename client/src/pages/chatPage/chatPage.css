@@ -12,7 +12,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow-y: scroll;
+  overflow-y: auto;
   scrollbar-width: thin; /* For Firefox */
   scrollbar-color: #0e0c16 transparent; /* Thumb and track colors */
   gap: 20px;
@@ -76,4 +76,39 @@ code {
 
 .message li::marker {
   margin: 0;
+}
+
+/* Images displayed on chat */
+.chat img {
+  width: 50%;
+  height: auto;
+}
+
+@media screen and (max-width: 800px) {
+  .message {
+    font-size: 15px;
+    padding: 10px 15px;
+  }
+
+  .chat img {
+    width: 70%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .chat img {
+    width: 80%;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .message {
+    max-width: 90%;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .message {
+    padding: 5px 15px;
+  }
 }

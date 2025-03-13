@@ -102,7 +102,7 @@ const ChatPage = () => {
   // Scroll to the bottom when new messages are added
   useEffect(() => {
     chatEndRef.current.scrollIntoView({ behavior: "smooth" });
-  }, [chatData?.history?.length, img.dbData?.url]);
+  }, [chatData?.history.length, img.dbData?.url]);
 
   // Update image URL when data is available
   useEffect(() => {
@@ -151,9 +151,6 @@ const ChatPage = () => {
                   <IKImage
                     urlEndpoint={import.meta.env.VITE_IMAGE_KIT_ENDPOINT}
                     src={message.img}
-                    height="300"
-                    width="400"
-                    transformation={[{ height: 300, width: 400 }]}
                     loading="lazy"
                     lqip={{ active: true, quality: 20 }}
                     alt="uploaded image"
@@ -175,9 +172,9 @@ const ChatPage = () => {
           </>
         )}
 
-        {/* DISPLAY A NEW IMAGE */}
+        {/* ADD A NEW IMAGE */}
 
-        {/* Display loader while loading image */}
+        {/* Display loader while image is loading */}
         {img?.isLoading && (
           <Loader
             className="img-loader"
@@ -187,14 +184,11 @@ const ChatPage = () => {
           />
         )}
 
-        {/* Display image if loaded successfully */}
+        {/* Display image if upload is successful */}
         {!img?.isLoading && img?.dbData?.url?.trim() && (
           <IKImage
             urlEndpoint={import.meta.env.VITE_IMAGE_KIT_ENDPOINT}
             src={img.dbData.url}
-            height="300"
-            width="400"
-            transformation={[{ height: 300, width: 400 }]}
             loading="lazy"
             lqip={{ active: true, quality: 20 }}
             alt="uploaded image"

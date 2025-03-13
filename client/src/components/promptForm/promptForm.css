@@ -6,6 +6,7 @@
   align-items: center;
   background-color: #0e0c16;
   border-radius: 20px;
+  margin-bottom: 20px;
 }
 
 textarea {
@@ -78,4 +79,17 @@ textarea::-webkit-scrollbar-track {
 .send-btn img {
   width: 16px;
   height: 16px;
+}
+
+@media screen and (max-width: 500px) {
+  .prompt-form {
+    border-radius: 10px;
+  }
+  textarea {
+    width: 90%;
+    padding: 10px 5px 10px 40px;
+  }
+  .attachment-btn {
+    left: 5px;
+  }
 }

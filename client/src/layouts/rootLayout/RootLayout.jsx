@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./rootLayout.css";
 import { Link, Outlet } from "react-router-dom";
 import { ClerkProvider, SignedIn, UserButton } from "@clerk/clerk-react";
@@ -24,6 +25,7 @@ const RootLayout = () => {
               <img src={bigLogo} alt="logo" />
               <span> ASK JESSBOT</span>
             </Link>
+
             {/* User info */}
             <div className="user">
               {/* Clerk prebuild components */}
@@ -32,8 +34,10 @@ const RootLayout = () => {
               </SignedIn>
             </div>
           </header>
-          {/* All pages - Show navbar on each page */}
+
+          {/* Show header on each page */}
           <main>
+            {/* <Outlet /> acts as a placeholder where the child routes defined in the React Router configuration will be rendered */}
             <Outlet />
           </main>
         </div>
