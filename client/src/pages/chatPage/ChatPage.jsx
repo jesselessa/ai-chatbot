@@ -26,10 +26,9 @@ const ChatPage = () => {
   // Fetch chat data from API
   const fetchChatData = async (chatId) => {
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/chats/${chatId}`,
-        { credentials: "include" }
-      );
+      const res = await fetch(`${import.meta.env.API_URL}/chats/${chatId}`, {
+        credentials: "include",
+      });
 
       if (!res.ok) {
         const errorMsg = await res.text();
@@ -66,15 +65,12 @@ const ChatPage = () => {
         ...(imageUrl && { img: imageUrl }),
       };
 
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/chats/${chatId}`,
-        {
-          method: "PUT",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        }
-      );
+      const res = await fetch(`${import.meta.env.API_URL}/chats/${chatId}`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
 
       if (!res.ok) {
         const errorMsg = await res.text();
@@ -149,7 +145,7 @@ const ChatPage = () => {
                 {/* Display image if it exists */}
                 {message.img && (
                   <IKImage
-                    urlEndpoint={import.meta.env.VITE_IMAGE_KIT_ENDPOINT}
+                    urlEndpoint={import.meta.env.IMAGE_KIT_ENDPOINT}
                     src={message.img}
                     loading="lazy"
                     lqip={{ active: true, quality: 20 }}
@@ -187,7 +183,7 @@ const ChatPage = () => {
         {/* Display image if upload is successful */}
         {!img?.isLoading && img?.dbData?.url?.trim() && (
           <IKImage
-            urlEndpoint={import.meta.env.VITE_IMAGE_KIT_ENDPOINT}
+            urlEndpoint={import.meta.env.IMAGE_KIT_ENDPOINT}
             src={img.dbData.url}
             loading="lazy"
             lqip={{ active: true, quality: 20 }}
