@@ -108,7 +108,7 @@ h3 {
 .bg {
   width: 200%;
   height: 100%;
-  background-image: url("/bg.png");
+  background-image: url(../../../src/assets/bg.png);
   background-size: auto 100%;
   opacity: 0.2;
   animation: 8s ease-in-out infinite alternate slideBotBg;
