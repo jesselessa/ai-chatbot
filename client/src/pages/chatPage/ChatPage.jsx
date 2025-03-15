@@ -68,15 +68,12 @@ const ChatPage = () => {
         ...(imageUrl && { img: imageUrl }),
       };
 
-      const res = await fetch(
-        `${import.meta.VITE_env.API_URL}/chats/${chatId}`,
-        {
-          method: "PUT",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        }
-      );
+      const res = await fetch(`${import.meta.env.API_URL}/chats/${chatId}`, {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
 
       if (!res.ok) {
         const errorMsg = await res.text();
