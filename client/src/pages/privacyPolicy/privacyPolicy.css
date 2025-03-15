@@ -1,9 +1,9 @@
 .privacy-policy {
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .privacy-content {
-  height: 100vh;
+  height: 100%;
   overflow-y: scroll;
   padding: 50px 100px;
 }

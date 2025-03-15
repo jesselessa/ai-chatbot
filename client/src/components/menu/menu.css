@@ -137,6 +137,6 @@ hr {
   .menu {
     width: 70%;
     top: 90px;
-    height: calc(100% - 90px);
+    min-height: calc(100% - 90px);
   }
 }

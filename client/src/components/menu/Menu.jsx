@@ -82,7 +82,8 @@ const Menu = ({ onClose }) => {
     }
   };
 
-  const openDeletionDialogBox = (chatId) => {
+  const openDeletionDialogBox = (e, chatId) => {
+    e.preventDefault();
     setDialogBox({ isOpen: true, chatId });
   };
 
@@ -132,7 +133,7 @@ const Menu = ({ onClose }) => {
                 className="delete"
                 src={bin}
                 alt="delete"
-                onClick={() => openDeletionDialogBox(chat._id)}
+                onClick={(e) => openDeletionDialogBox(e, chat._id)}
               />
 
               {/* Chat title */}
