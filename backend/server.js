@@ -13,7 +13,7 @@ import chatsRoute from "./routes/chats.js";
 import userChatsRoute from "./routes/userChats.js";
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -44,21 +44,11 @@ app.use("/api/chats", handleAuthErrors, chatsRoute);
 app.use("/api/user-chats", handleAuthErrors, userChatsRoute);
 
 //* Serve static files in production
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../client/dist")));
+app.use(express.static(path.join(__dirname, "../client/dist")));
 
-  // Redirect all unknown routes to the client-side application
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../client/dist/index.html"));
-  });
-}
-
-//* Handle undefined routes for non-production environments
-if (process.env.NODE_ENV !== "production") {
-  app.get("*", (req, res) => {
-    res.status(404).json({ error: "Page not found!" });
-  });
-}
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
+});
 
 //* Handle errors globally
 app.use((err, req, res, next) => {

@@ -1,7 +1,7 @@
 {
   "name": "ai-chatbot-client",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "homepage": "https://ai-chatbot.jesselessa.dev/",
   "type": "module",
   "scripts": {

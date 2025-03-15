@@ -5,12 +5,12 @@ import { IKContext, IKUpload } from "imagekitio-react";
 import attachment from "../../../src/assets/attachment.png";
 
 //* Configure ImageKit for client-side upload
-const urlEndpoint = import.meta.env.IMAGE_KIT_ENDPOINT;
-const publicKey = import.meta.env.IMAGE_KIT_PUBLIC_KEY;
+const urlEndpoint = import.meta.env.VITE_IMAGE_KIT_ENDPOINT;
+const publicKey = import.meta.env.VITE_IMAGE_KIT_PUBLIC_KEY;
 
 const authenticator = async () => {
   try {
-    const response = await fetch(`${import.meta.env.API_URL}/upload`);
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/upload`);
 
     // If not authenticated, we receive an error message
     if (!response.ok) {

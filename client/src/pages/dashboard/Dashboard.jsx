@@ -16,7 +16,7 @@ const Dashboard = () => {
 
   // Create a new chat
   const createChat = async (text) => {
-    const res = await fetch(`${import.meta.env.API_URL}/chats`, {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/chats`, {
       method: "POST",
       credentials: "include",
       headers: {
