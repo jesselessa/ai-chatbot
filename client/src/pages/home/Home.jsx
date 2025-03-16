@@ -35,12 +35,12 @@ const Home = () => {
       {/* Right */}
       <div className="right">
         <div className="img-container">
-          {/* Animated bg */}
+          {/* Animated bg image*/}
           <div className="bg-container">
             <div className="bg"></div>
           </div>
 
-          {/* Animated image*/}
+          {/* Animated bot image*/}
           <img src={bot} alt="bot" className="bot" />
 
           {/* Chatbox */}

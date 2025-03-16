@@ -7,6 +7,11 @@ import bigLogo from "../../../src/assets/logo-big.png";
 function PrivacyPolicy() {
   return (
     <section className="privacy-policy">
+      {/* Logo */}
+      <Link to="/">
+        <img src={bigLogo} alt="logo" />
+      </Link>
+
       <div className="privacy-content">
         <h1>Privacy Policy</h1>
 

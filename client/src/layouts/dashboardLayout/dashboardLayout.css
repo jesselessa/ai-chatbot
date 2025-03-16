@@ -1,5 +1,5 @@
 .loadingPage {
-  min-height: 100vh;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -7,7 +7,6 @@
 
 .dashboardLayout {
   position: relative;
-  min-height: 100vh;
   display: flex;
   gap: 20px;
   padding-top: 20px;
@@ -15,10 +14,13 @@
 
 .content {
   flex: 1;
+  height: calc(
+    100vh - 90px
+  ); /* RootLayout and DashboardLayout padding-tops + header height */
   background-color: #2c2937;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
-  padding: 20px 20px 0 20px;
+  padding: 20px 20px 0;
 }
 
 @media screen and (max-width: 800px) {
@@ -32,8 +34,9 @@
     gap: 15px;
   }
   .content {
+    height: calc(100vh - 80px);
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    padding: 10px 0 0 0;
+    padding: 10px 0 0;
   }
 }

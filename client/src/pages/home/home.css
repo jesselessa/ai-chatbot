@@ -1,20 +1,18 @@
 .home {
-  height: 100vh;
-  position: relative;
+  height: calc(100vh - 90px); /* Aligned on <main> in RootLayout */
   display: flex;
   align-items: center;
-  /* overflow-y: auto; */
+  overflow-x: hidden;
   gap: 80px;
-  padding-top: 20px;
 }
 
 /* Bg image */
 .orbital {
-  width: 100%;
-  height: 100%;
   position: absolute;
   top: 0;
   left: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center;
   opacity: 0.1;
@@ -36,14 +34,14 @@
 
 .left {
   flex: 1;
-  width: 100%;
   height: 100%;
+  height: calc(100vh - 90px);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  gap: 20px;
+  gap: 50px;
 }
 
 h1 {
@@ -76,8 +74,7 @@ h3 {
 
 .right {
   flex: 1;
-  width: 100%;
-  height: 100%;
+  height: calc(100vh - 90px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -85,29 +82,30 @@ h3 {
 }
 
 .img-container {
-  width: 80%;
-  height: 50%;
   position: relative;
+  width: 460px;
+  height: 460px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
   background-color: #140e2d;
   border-radius: 50px;
 }
 
 .bg-container {
-  width: 100%;
-  height: 100%;
   position: absolute;
   top: 0;
   left: 0;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   border-radius: 50px;
 }
 
 .bg {
-  width: 200%;
+  width: 100%;
   height: 100%;
   background-image: url(../../../src/assets/bg.png);
   background-size: auto 100%;
@@ -120,7 +118,7 @@ h3 {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translateX(-5%);
   }
 }
 
@@ -142,8 +140,8 @@ h3 {
 
 .chatbox {
   position: absolute;
-  bottom: -30px;
-  right: -30px;
+  bottom: 20px;
+  right: 0;
   display: flex;
   align-items: center;
   background-color: #2c2937;
@@ -162,13 +160,14 @@ h3 {
 
 .terms {
   position: absolute;
-  bottom: -20px; /* RootLayout padding-bottom included */
+  bottom: 0;
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 5px;
+  z-index: 10;
 }
 
 .terms img {
@@ -182,17 +181,17 @@ h3 {
   font-size: 15px;
   text-align: center;
   gap: 10px;
-  margin-bottom: 20px;
 }
 
 /* Media queries */
 @media screen and (max-width: 1024px) {
   .home {
     flex-direction: column;
-    gap: 0;
+    gap: 20px;
   }
   .left {
-    min-height: 60%;
+    width: 100%;
+    height: auto;
     gap: 20px;
   }
   h1 {
@@ -203,20 +202,23 @@ h3 {
     max-width: 100%;
   }
   .right {
-    min-height: 40%;
+    width: 100%;
+    height: auto;
   }
   .img-container {
-    width: 50%;
-    max-width: 60%;
+    width: 400px;
+    height: 400px;
     border-radius: 20px;
   }
   .bg-container {
     border-radius: 20px;
   }
+  .bot {
+    width: 90%;
+    height: 90%;
+  }
   .chatbox {
-    right: -15px;
-    bottom: -10px;
-    padding: 5px;
+    bottom: 25px;
   }
   .chatbox img {
     width: 24px;
@@ -225,10 +227,6 @@ h3 {
   .chatbox span {
     font-size: 15px;
   }
-  .terms {
-    bottom: -10px;
-  }
-
   .terms img {
     display: none;
   }
@@ -241,16 +239,19 @@ h3 {
   h1 {
     margin-bottom: 0;
   }
+  .img-container {
+    width: 350px;
+    height: 350px;
+  }
   .left a {
     margin-top: 15px;
-  }
-  .img-container {
-    width: 70%;
-    max-width: 80%;
   }
 }
 
 @media screen and (max-width: 500px) {
+  .home {
+    height: calc(100vh - 80px);
+  }
   h1 {
     font-size: 50px;
   }
@@ -260,11 +261,32 @@ h3 {
   h3 {
     font-size: 16px;
   }
+  .left a {
+    margin-top: 10px;
+  }
   .img-container {
-    width: 90%;
-    max-width: 100%;
+    width: 280px;
+    height: 280px;
+    border-radius: 15px;
+  }
+  .bg-container {
+    border-radius: 15px;
   }
   .terms {
     width: 100%;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .img-container {
+    width: 250px;
+    height: 250px;
+  }
+  .chatbox img {
+    width: 20px;
+    height: 20px;
+  }
+  .chatbox span {
+    font-size: 13px;
   }
 }

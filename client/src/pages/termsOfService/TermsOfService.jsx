@@ -7,6 +7,11 @@ import bigLogo from "../../../src/assets/logo-big.png";
 function TermsOfService() {
   return (
     <section className="terms-of-service">
+      {/* Logo */}
+      <Link to="/">
+        <img src={bigLogo} alt="logo" />
+      </Link>
+
       <div className="terms-content">
         <h1>Terms Of Service</h1>
 

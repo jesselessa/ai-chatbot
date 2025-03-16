@@ -1,9 +1,10 @@
 .menu {
   width: 20%;
-  height: 100%;
+  height: calc(100vh - 90px); /* Aligned on <main> */
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: auto;
+  padding: 10px 0;
 }
 
 .menu a {
@@ -34,10 +35,9 @@ hr {
 }
 
 .list {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
-  overflow-y: scroll;
   scrollbar-width: thin; /* For Firefox */
   scrollbar-color: #2c2937 transparent; /* Thumb and track colors */
 }
@@ -82,11 +82,6 @@ hr {
   display: block;
 }
 
-.upgrade {
-  margin-top: auto;
-  margin-bottom: 20px;
-}
-
 .upgrade .text {
   font-size: 14px;
   font-weight: 600;
@@ -107,7 +102,7 @@ hr {
   font-size: 13px;
   color: #888;
   border-radius: 0;
-  padding: 0;
+  padding: 0 0 10px 0;
 }
 
 .upgrade a:hover {
@@ -123,20 +118,21 @@ hr {
 @media screen and (max-width: 800px) {
   .menu {
     width: 33%;
-    position: fixed;
-    top: 100px; /* Padding-tops of RootLayout + header + DashboardLayout + .content */
+    position: absolute;
+    top: 30px; /* Burger height */
     left: 0;
-    height: calc(100% - 100px);
     background-color: #0e0c16;
     z-index: 10;
-    padding: 20px 10px;
   }
 }
 
+@media screen and (max-width: 500px) {
+  .menu {
+    height: calc(100vh - 80px);
+  }
+}
 @media screen and (max-width: 550px) {
   .menu {
     width: 70%;
-    top: 90px;
-    min-height: calc(100% - 90px);
   }
 }

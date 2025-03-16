@@ -1,10 +1,18 @@
 .privacy-policy {
   min-height: 100vh;
+  position: relative;
+}
+
+.privacy-policy img {
+  position: absolute;
+  top: 30px;
+  left: 20px;
+  width: 32px;
+  height: 32px;
 }
 
 .privacy-content {
   height: 100%;
-  overflow-y: scroll;
   padding: 50px 100px;
 }
 
@@ -44,10 +52,24 @@
   .privacy-content {
     padding: 50px;
   }
+  .privacy-policy h1 {
+    font-size: 25px;
+  }
+  .privacy-policy h2,
+  .privacy-policy ol li::marker {
+    font-size: 20px;
+  }
 }
 
 @media screen and (max-width: 500px) {
+  .privacy-policy h1 {
+    font-size: 23px;
+  }
   .privacy-content {
     padding: 30px 50px;
+  }
+  .privacy-policy img {
+    top: 20px;
+    left: 15px;
   }
 }

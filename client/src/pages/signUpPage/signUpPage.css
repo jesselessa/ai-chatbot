@@ -1,6 +1,7 @@
 .signUpPage {
-  height: 100%;
+  height: 100%; /* 100% of <main> */
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-bottom: 20px;
 }
