@@ -20,7 +20,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 // Generate AI response
 export const generateResponse = async (chatHistory, imageUrl) => {
   const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
+    model: process.env.GEMINI_AI_MODEL,
     safetySettings,
   });
 
