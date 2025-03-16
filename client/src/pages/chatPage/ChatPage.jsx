@@ -103,7 +103,8 @@ const ChatPage = () => {
 
   // Scroll to the bottom when new messages are added
   useEffect(() => {
-    chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    if (chatEndRef.current)
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
   }, [chatData?.history.length, img.dbData?.url]);
 
   // Update image URL when data is available
