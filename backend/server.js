@@ -20,7 +20,23 @@ const __dirname = dirname(__filename);
 //* Middlewares
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: function (origin, callback) {
+      // Define an array of allowed URLs to access the API
+      const allowedOrigins = [
+        "https://www.ai-chatbot.jesselessa.dev",
+        "https://ai-chatbot.jesselessa.dev",
+      ];
+      // Check if the origin is in the allowedOrigins array
+      // If the origin is not provided (e.g., for same-origin requests), allow it
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        // Allow the request by calling the callback with null (no error) and true (allow)
+        callback(null, true);
+      } else {
+        // Deny the request by calling the callback with an error and false
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    // Allow sending cookies in cross-origin requests
     credentials: true,
   })
 );
