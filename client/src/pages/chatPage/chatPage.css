@@ -54,12 +54,12 @@
 
 .markdown {
   width: 100%;
+  overflow-x: auto;
 }
 
 pre {
   width: 100%;
   word-break: break-word;
-  overflow-x: auto;
 }
 
 code {
