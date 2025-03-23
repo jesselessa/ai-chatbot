@@ -20,7 +20,7 @@ This project is a chatbot application created with React, Node.js, Express.js an
 
 ## Demo
 
-You can see a live demo of the project [here](https://ai-chatbot.jesselessa.dev/).
+You can see a live demo of the project [here](https://www.ai-chatbot.jesselessa.dev/).
 
 ## Stack
 
