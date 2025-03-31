@@ -105,7 +105,7 @@ const ChatPage = () => {
   useEffect(() => {
     if (chatEndRef.current)
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
-  }, [chatData?.history.length, img.dbData?.url]);
+  }, [chatData?.history, img.dbData?.url]);
 
   // Update image URL when data is available
   useEffect(() => {
