@@ -1,7 +1,7 @@
 .burger {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 37.5px; /* RootLayout pt + 1/2 of 1/2 of 'user' height (12.5px) */
+  right: 70px; /* 70px = 'user' width + 20px gap */
   display: none;
   flex-direction: column;
   justify-content: space-around;
@@ -9,7 +9,7 @@
   height: 25px;
   background: transparent;
   border: none;
-  z-index: 500;
+  z-index: 100;
   cursor: pointer;
 }
 
@@ -36,5 +36,11 @@
 @media screen and (max-width: 800px) {
   .burger {
     display: flex;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .burger {
+    top: 22.5px;
   }
 }

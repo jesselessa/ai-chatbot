@@ -108,8 +108,17 @@ const Menu = ({ onClose }) => {
         to="https://github.com/jesselessa"
         target="_blank"
         rel="noopener noreferrer"
+        onClick={onClose}
       >
         Contact
+      </Link>
+
+      <Link to="/terms-of-service" target="_blank" onClick={onClose}>
+        Terms of service
+      </Link>
+
+      <Link to="/privacy-policy" target="_blank" onClick={onClose}>
+        Privacy policy
       </Link>
 
       <hr />

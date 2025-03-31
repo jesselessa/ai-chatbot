@@ -1,9 +1,10 @@
 .rootLayout {
   position: relative;
-  min-height: 100vh;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-x: hidden;
   padding: 20px 20px 0;
 }
 
@@ -33,6 +34,7 @@ header {
 .user {
   display: flex;
   align-items: center;
+  padding-bottom: 5px;
 }
 
 /* Clerk UserButton box image */
@@ -41,17 +43,18 @@ header {
   height: 40px;
 }
 
+/* Main contains every page of the app */
 main {
-  min-height: calc(
-    100vh - 90px
-  ); /* RootLayout and DashboardLayout padding-tops + header height */
+  height: calc(
+    100vh - 70px
+  ); /* 70px = RootLayout padding-top (pt) + header height */
 }
 
 @media screen and (max-width: 500px) {
   .rootLayout {
-    padding: 10px 15px 0;
+    padding: 10px 10px 0;
   }
   main {
-    min-height: calc(100vh - 80px);
+    height: calc(100vh - 60px);
   }
 }

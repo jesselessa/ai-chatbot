@@ -94,15 +94,6 @@ const Home = () => {
           </div>
         </div>
       </div>
-
-      <div className="terms">
-        <img src={logo} alt="logo" />
-        <div className="links">
-          <Link to="/terms-of-service">Terms of Service</Link>
-          <span>|</span>
-          <Link to="/privacy-policy">Privacy Policy</Link>
-        </div>
-      </div>
     </div>
   );
 };
