@@ -20,9 +20,8 @@ const __dirname = dirname(__filename);
 //* Middlewares
 app.use(
   cors({
-    origin: [process.env.CLIENT_URL, process.env.API_URL],
-    // Allow sending cookies in cross-origin requests
-    credentials: true,
+    origin: [process.env.CLIENT_URL],
+    credentials: true, // Allow cookies
   })
 );
 app.use(express.json());
