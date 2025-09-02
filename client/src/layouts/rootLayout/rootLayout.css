@@ -13,8 +13,6 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  border: 2px solid blue;
 }
 
 .logo {
@@ -36,6 +34,7 @@ header {
 .user {
   display: flex;
   align-items: center;
+  margin-bottom: 10px;
 }
 
 /* Clerk UserButton box image */
@@ -51,6 +50,11 @@ main {
   ); /* 70px = header height (50px) + RootLayout padding-top (pt = 20px) */
 }
 
+@media screen and (max-width: 800px) {
+  .user {
+    margin-bottom: 5px;
+  }
+}
 @media screen and (max-width: 500px) {
   .rootLayout {
     padding: 10px 10px 0;
