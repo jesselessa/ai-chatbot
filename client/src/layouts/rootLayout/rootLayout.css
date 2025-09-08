@@ -1,11 +1,10 @@
 .rootLayout {
   position: relative;
   width: 100vw;
-  height: 100dvh; /* Use dynamic viewport */
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
   padding: 20px 20px 0;
 }
 
