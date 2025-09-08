@@ -4,7 +4,9 @@
   height: 100dvh; /* Use dynamic viewport */
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  /* overflow: hidden; */
+  overflow-y: hidden;
+  overflow-x: auto;
   padding: 20px 20px 0;
 }
 
