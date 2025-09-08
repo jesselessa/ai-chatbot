@@ -94,6 +94,16 @@ const Home = () => {
           </div>
         </div>
       </div>
+
+      <div className="privacy-service">
+        <Link to="/privacy-policy" target="_blank">
+          Privacy Policy
+        </Link>
+        <span>|</span>
+        <Link to="/terms-of-service" target="_blank">
+          Terms Of Service
+        </Link>
+      </div>
     </div>
   );
 };
