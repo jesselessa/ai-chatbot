@@ -1,7 +1,17 @@
 import Chat from "../models/chat.js";
 import UserChats from "../models/userChats.js";
 import { generateResponse } from "../config/gemini.js";
+import mongoose from "mongoose";
+import { generateChatTitle } from "../utils/chatTitle.js";
 
+/*
+ * Every function is associated to a protected route where user must
+ * be authenticated
+ */
+
+//? A Mongoose transaction is a database operation that groups multiple operations (document creation, update, deletion) into a single unit. Either all operations succeed, or none of them do.
+
+//* Get a single chat by its ID
 export const getChat = async (req, res, next) => {
   const { userId } = req.auth; // Get ID from Clerk auth info
   const { chatId } = req.params;
@@ -18,12 +28,17 @@ export const getChat = async (req, res, next) => {
   }
 };
 
+//* Add a new chat
 export const addNewChat = async (req, res, next) => {
   const { userId } = req.auth;
   const { text } = req.body;
 
+  // Start a transaction session to ensure atomicity
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
-    // Create a new chat instance with initial user message
+    // Create a new chat instance with the initial user message
     const newChat = new Chat({
       userId,
       history: [
@@ -34,49 +49,43 @@ export const addNewChat = async (req, res, next) => {
       ],
     });
 
-    const savedChat = await newChat.save(); // Send chat to database
-    const chatTitle = text?.length > 40 ? `${text.substring(0, 40)}...` : text; // Define chat title (limited to 1st 40 characters)
+    // Save the new chat within the transaction
+    const savedChat = await newChat.save({ session });
+    const chatTitle = generateChatTitle(text);
 
-    // Check if user already has a chat collection
-    const userChats = await UserChats.findOne({ userId });
-
-    if (!userChats) {
-      // If not, create a new one and add chat
-      await new UserChats({
-        userId,
-        chats: [
-          {
+    // Update the user's chat collection
+    await UserChats.findOneAndUpdate(
+      { userId },
+      {
+        $push: {
+          chats: {
             _id: savedChat._id,
             title: chatTitle,
-          },
-        ],
-      }).save();
-    } else {
-      // If user already has a chat collection, update it
-      await UserChats.updateOne(
-        { userId },
-        {
-          $push: {
-            chats: {
-              _id: savedChat._id,
-              title: chatTitle,
-            },
+            updatedAt: new Date(),
           },
         },
-        { upsert: true }
-      );
-    }
+      },
+      { new: true, upsert: true, session }
+    );
 
+    // Commit the transaction if all operations are successful
+    await session.commitTransaction();
     res.status(201).json({
       message: "Chat saved successfully",
       chatId: savedChat._id,
     });
   } catch (err) {
+    // Rollback the transaction on error
+    await session.abortTransaction();
     console.error("Error creating chat:", err);
     next(err);
+  } finally {
+    // End the session
+    session.endSession();
   }
 };
 
+//* Update a chat with a new user message
 export const updateChat = async (req, res, next) => {
   const { userId } = req.auth;
   const { chatId } = req.params;
@@ -89,23 +98,20 @@ export const updateChat = async (req, res, next) => {
       return res.status(404).json({ message: "Chat not found" });
     }
 
-    // Initialize MongoDB chat history
-    let dbChatHistory = chat.history;
-
-    // Initialize Gemini chat history (without MongoDB "_id" and "img" keys to fit AI model)
-    let aiChatHistory = dbChatHistory
+    // Prepare chat history for Gemini model
+    let aiChatHistory = chat.history
       .filter((message) => message?.role && message?.parts)
       .map(({ role, parts }) => ({
         role,
         parts: parts.map(({ text }) => ({ text })),
       }));
 
-    // Add user question to MongoDB et Gemini chat histories
+    // Add the new user question to both histories
     if (question) {
-      dbChatHistory.push({
+      chat.history.push({
         role: "user",
         parts: [{ text: question }],
-        ...(img && { img }), // Optional image URL
+        ...(img && { img }),
       });
 
       aiChatHistory.push({
@@ -117,34 +123,22 @@ export const updateChat = async (req, res, next) => {
     // Generate AI response
     const aiResponse = await generateResponse(aiChatHistory, img);
 
-    // Add AI response to chat histories
-    dbChatHistory.push({ role: "model", parts: [{ text: aiResponse }] });
-    aiChatHistory.push({ role: "model", parts: [{ text: aiResponse }] });
+    // Add AI response to the chat history
+    chat.history.push({ role: "model", parts: [{ text: aiResponse }] });
 
-    // Update chat data in database
-    const updatedChat = await Chat.updateOne(
-      { _id: chatId, userId },
-      { $set: { history: dbChatHistory } }
-    );
-
-    // Check if update is effective
-    if (updatedChat.matchedCount === 0)
-      // If, no document matches search criteria
-      return res.status(404).json({ message: "Chat not found" });
+    // Save the updated chat document
+    await chat.save();
 
     // Define chat title based on input type
-    const chatTitle = img
-      ? "Image Analyze"
-      : question?.length > 40
-      ? `${question.substring(0, 40)}...`
-      : question;
+    const chatTitle = generateChatTitle(question, img);
 
-    // Update chat title in user chat collection
+    // Update chat title and update date in user chat collection
     await UserChats.updateOne(
       { userId, "chats._id": chatId },
       {
         $set: {
           "chats.$.title": chatTitle,
+          "chats.$.updatedAt": new Date(),
         },
       }
     );
@@ -156,26 +150,44 @@ export const updateChat = async (req, res, next) => {
   }
 };
 
+//* Delete a chat and its reference from user's collection
 export const deleteChat = async (req, res, next) => {
   const { userId } = req.auth;
   const { chatId } = req.params;
 
+  // Start a transaction session to ensure atomicity
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
-    // Find and delete chat
-    const chat = await Chat.findOneAndDelete({ _id: chatId, userId });
+    // Find and delete chat within the transaction
+    const chat = await Chat.findOneAndDelete(
+      { _id: chatId, userId },
+      { session }
+    );
     if (!chat) {
+      await session.abortTransaction();
+      session.endSession();
       return res.status(404).json({ message: "Chat not found" });
     }
 
-    // Remove chat reference from user's chat collection
+    // Remove chat reference from user's chat collection within the transaction
     await UserChats.updateOne(
       { userId },
-      { $pull: { chats: { _id: chatId } } }
+      { $pull: { chats: { _id: chatId } } },
+      { session }
     );
 
+    // Commit the transaction if all operations are successful
+    await session.commitTransaction();
     res.status(200).json({ message: "Chat deleted successfully" });
   } catch (err) {
+    // Rollback the transaction on error
+    await session.abortTransaction();
     console.error("Error deleting chat:", err);
     next(err);
+  } finally {
+    // End the session
+    session.endSession();
   }
 };

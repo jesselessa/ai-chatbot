@@ -1,13 +1,16 @@
 import UserChats from "../models/userChats.js";
 
+//? lean() is a Mongoose-specific method that improves read performance by returning plain JavaScript objects instead of full Mongoose documents
+//? Useful when you only need to read data from the database to display it or send it to a client, without intending to modify the data or use Mongoose's document methods
+
+//* Get all chats for the authenticated user
 export const getUserChats = async (req, res, next) => {
   const { userId } = req.auth;
 
   try {
-    const userChats = await UserChats.findOne({ userId });
-
-    if (!userChats)
-      return res.status(404).json({ message: "No chat found for this user" });
+    // Fetch user chats and sort them in memory
+    const userChats = await UserChats.findOne({ userId }).lean();
+    if (!userChats) return res.status(200).json([]);
 
     // Sort chats by 'updatedAt' from newest to oldest
     const sortedChats = userChats.chats.sort(

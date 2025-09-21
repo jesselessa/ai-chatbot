@@ -13,7 +13,7 @@ import chatsRoute from "./routes/chats.js";
 import userChatsRoute from "./routes/userChats.js";
 
 const app = express();
-const port = process.env.PORT;
+const PORT = process.env.PORT;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -58,8 +58,11 @@ app.use((err, req, res, next) => {
     .json({ error: err.message || "Internal Server Error" });
 });
 
-//* Start server and connect to database
-app.listen(port, async () => {
+//* Connect to database and start server
+const startServer = async () => {
   await connectDB();
-  console.log(`Server running on port ${port}`);
-});
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+};
+startServer();
