@@ -25,7 +25,7 @@ app.use(
   })
 );
 app.use(express.json());
-app.use(clerkMiddleware()); //! ClerkMiddleware checks the request cookies and headers for a session JWT and, if found, attaches the Auth object to the request object under the 'auth' key
+app.use(clerkMiddleware()); //! ClerkMiddleware checks the request cookies and headers for a session JWT (publishable and secret keys must be included in a .env file) and, if found, attaches the Auth object to the request object under the 'auth' key
 
 //* Routes
 // ImageKit authentication info
