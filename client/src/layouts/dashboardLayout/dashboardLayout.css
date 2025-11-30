@@ -14,12 +14,18 @@
 }
 
 .content {
-  flex: 1;
+  width: 80%;
   height: 100%;
   background-color: #2c2937;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   padding: 20px 20px 0;
+}
+
+@media screen and (max-width: 800px) {
+  .content {
+    width: 100%;
+  }
 }
 
 @media screen and (max-width: 500px) {
