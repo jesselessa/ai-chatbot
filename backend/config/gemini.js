@@ -4,6 +4,7 @@ import {
   HarmCategory,
 } from "@google/generative-ai";
 
+// Define safety settings for content moderation
 const safetySettings = [
   {
     category: HarmCategory.HARM_CATEGORY_HARASSMENT,
@@ -15,10 +16,12 @@ const safetySettings = [
   },
 ];
 
+// Initialize Google Generative AI client
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// Generate AI response
+// Function to generate AI response with optional image input
 export const generateResponse = async (chatHistory, imageUrl) => {
+  // Set up generative model with safety settings
   const model = genAI.getGenerativeModel({
     model: process.env.GEMINI_AI_MODEL,
     safetySettings,
@@ -40,6 +43,7 @@ export const generateResponse = async (chatHistory, imageUrl) => {
     // If image exists, retrieve its URL from the frontend
     if (imageUrl) {
       try {
+        // Fetch image and convert to base64
         const imageResp = await fetch(imageUrl).then((response) =>
           response.arrayBuffer()
         );
@@ -61,6 +65,7 @@ export const generateResponse = async (chatHistory, imageUrl) => {
     return "No user message provided.";
   }
 
+  // Send message and handle streaming response
   try {
     const result = await chat.sendMessageStream(content);
 

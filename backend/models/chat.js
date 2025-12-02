@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Schema for chat history between user and AI model
 const chatSchema = new mongoose.Schema(
   {
     userId: {
