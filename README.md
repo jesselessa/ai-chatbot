@@ -1,6 +1,6 @@
 # ai-chatbot
 
-This project is a chatbot application created with React, Node.js, Express.js and MongoDB, using Google Gemini AI Model.
+This project is a chatbot application created with React, Node.js, Express.js and MongoDB, using Google Gemini AI Model (Gemini 2.5 Flash).
 
 ## Table of Contents
 
