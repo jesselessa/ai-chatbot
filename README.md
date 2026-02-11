@@ -80,7 +80,7 @@ After setting up your database, you can run the project locally by following the
 
 ## Contributing
 
-Feel free to make improvements, fix bugs, or suggest new features. Contributions are welcomed !
+Feel free to make improvements, fix bugs, or suggest new features. Contributions are welcome !
 
 - Fork the repository and clone it to your local machine : `git clone https://github.com/jesselessa/ai-chatbot.git`.
 - Navigate to the project directory : `cd ai-chatbot`.
