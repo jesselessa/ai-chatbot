@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./dashboard.css";
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 

@@ -1,7 +1,7 @@
 import "./dashboardLayout.css";
 import { useState, useEffect } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/react";
 
 // Components
 import Loader from "../../components/loader/Loader.jsx";
