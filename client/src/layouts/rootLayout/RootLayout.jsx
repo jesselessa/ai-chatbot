@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./rootLayout.css";
 import { Link, Outlet } from "react-router-dom";
-import { ClerkProvider, SignedIn, UserButton } from "@clerk/react";
+import { ClerkProvider, SignedIn, UserButton } from "@clerk/clerk-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Image
